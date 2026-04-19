@@ -1,0 +1,369 @@
+<div class="vsr-root" [class.threat-active]="isThreatDetected()" [class.mode-conv]="visionMode() === 'conversacion'">
+
+    <!-- ══ THREAT OVERLAY ══ -->
+    @if (isThreatDetected() && activeThreat()) {
+    <div class="threat-overlay">
+        <div class="threat-overlay-inner">
+            <div class="threat-icon-big">{{ getThreatIcon(activeThreat()!.type) }}</div>
+            <div class="threat-title">{{ activeThreat()!.message }}</div>
+            <div class="threat-desc">{{ activeThreat()!.description }}</div>
+            <div class="threat-badge" [class]="'sev-' + activeThreat()!.severity">{{
+                getSeverityLabel(activeThreat()!.severity) }}</div>
+            <div class="threat-overlay-actions">
+                <button class="btn-emergency" (click)="callEmergency()">📞 EMERGENCIAS</button>
+                <button class="btn-dismiss" (click)="clearThreat()">✕ DESCARTAR</button>
+            </div>
+        </div>
+    </div>
+    }
+
+    <!-- ══ HEADER ══ -->
+    <header class="vsr-header">
+        <div class="header-brand">
+            <div class="brand-dot" [class.dot-active]="isAiActive()" [class.dot-alert]="isThreatDetected()"></div>
+            <span class="brand-name">VERTEX<span class="brand-accent">SENTINEL</span></span>
+            <span class="brand-version">v6.0</span>
+        </div>
+        <div class="header-status-row">
+            <button class="cam-header-btn" [class.cam-active]="isCameraActive()" (click)="toggleCamera()">
+                <span>{{ isCameraActive() ? '⬡' : '○' }}</span>
+                <span>{{ isCameraActive() ? 'CAM ON' : 'CAM OFF' }}</span>
+            </button>
+            <div class="status-chip" [class]="'chip-' + sentinelStatus()">
+                <span class="chip-dot"></span>
+                <span class="chip-label">
+                    {{ sentinelStatus() === 'idle' ? 'STANDBY' :
+                    sentinelStatus() === 'scanning' ? 'ESCANEANDO' :
+                    sentinelStatus() === 'alert' ? 'ALERTA' : 'OFFLINE' }}
+                </span>
+            </div>
+            @if (isAlwaysListening()) {
+            <div class="status-chip chip-always-on">
+                <span class="chip-dot"></span>
+                <span class="chip-label chip-transcript">{{ alwaysListeningTranscript() || 'ESCUCHANDO' }}</span>
+            </div>
+            }
+            @if (isSpeaking()) {
+            <div class="status-chip chip-speak">
+                <span class="chip-dot"></span>
+                <span class="chip-label">HABLANDO</span>
+            </div>
+            }
+        </div>
+
+        <!-- Versión premium (con texto deslizante) -->
+        @if (visionMode() === 'vigilancia') {
+        <button class="analytics-fab-premium" (click)="showAnalytics.set(true)">
+            <span class="fab-icon">📊</span>
+            <span class="fab-text">Analytics</span>
+        </button>
+        }
+        @if (isAiActive()) {
+        <div class="header-stats">
+            <div class="stat-item">
+                <span class="stat-val">{{ sentinelStats().totalScans }}</span>
+                <span class="stat-lbl">SCANS</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-val text-alert">{{ sentinelStats().threatsDetected }}</span>
+                <span class="stat-lbl">AMENAZAS</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-val">{{ formatUptime(sentinelStats().uptime) }}</span>
+                <span class="stat-lbl">UPTIME</span>
+            </div>
+            @if (sentinelStats().lastScanMs > 0) {
+            <div class="stat-item">
+                <span class="stat-val">{{ sentinelStats().lastScanMs }}ms</span>
+                <span class="stat-lbl">LATENCIA</span>
+            </div>
+            }
+        </div>
+        }
+    </header>
+
+    <!-- ══ MODE SWITCHER ══ -->
+    <div class="mode-switcher">
+        <button class="mode-btn" [class.mode-active]="visionMode() === 'vigilancia'" (click)="setMode('vigilancia')">
+            <span class="mode-icon">⬡</span><span>VIGILANCIA</span>
+        </button>
+        <button class="mode-btn" [class.mode-active]="visionMode() === 'conversacion'"
+            (click)="setMode('conversacion')">
+            <span class="mode-icon">◈</span><span>CONVERSACIÓN</span>
+        </button>
+    </div>
+
+    @if (isAiActive()) {
+    <div class="scan-progress-bar">
+        <div class="scan-progress-fill" [style.width.%]="scanProgress()"></div>
+    </div>
+    }
+
+    <!-- ══════════════════════════════════════════════════
+         VIGILANCIA
+    ══════════════════════════════════════════════════ -->
+    @if (visionMode() === 'vigilancia') {
+    <div class="surveillance-layout">
+
+        <div class="camera-feed-container" [class.cam-alert]="isThreatDetected()" [class.cam-scanning]="isProcessing()">
+            <video #videoStream autoplay playsinline muted class="camera-feed"
+                [class.cam-offline]="!isCameraActive()"></video>
+            @if (isCameraActive()) {
+            <div class="cam-grid"></div>
+            <div class="cam-corner tl"></div>
+            <div class="cam-corner tr"></div>
+            <div class="cam-corner bl"></div>
+            <div class="cam-corner br"></div>
+            <button class="btn-switch-cam" (click)="switchCamera()" title="Cambiar cámara">⟳</button>
+            }
+            @if (isProcessing()) { <div class="scan-line"></div> }
+            @if (!isCameraActive()) {
+            <div class="cam-offline-msg">
+                <div class="offline-icon">⬡</div>
+                <div class="offline-text">CÁMARA OFFLINE</div>
+                <div class="offline-sub">Activa la cámara para comenzar</div>
+            </div>
+            }
+            @if (isThreatDetected() && activeThreat()) {
+            <div class="cam-threat-badge"><span class="pulse-dot"></span>{{ activeThreat()?.message }}</div>
+            }
+        </div>
+
+        <div class="surveillance-panel">
+            <div class="analysis-panel">
+                <div class="panel-header">
+                    <span class="panel-title">ANÁLISIS EN VIVO</span>
+                    @if (isAiActive()) { <span class="panel-live">● LIVE</span> }
+                </div>
+                <div class="analysis-text">{{ lastAnalysis() }}</div>
+            </div>
+
+            @if (isThreatDetected() && activeThreat()) {
+            <div class="active-alert-panel">
+                <div class="alert-header">
+                    <span class="alert-icon">{{ getThreatIcon(activeThreat()!.type) }}</span>
+                    <span class="alert-title">{{ activeThreat()!.message }}</span>
+                    <span class="alert-sev" [class]="'sev-' + activeThreat()!.severity">{{
+                        getSeverityLabel(activeThreat()!.severity) }}</span>
+                </div>
+                <div class="alert-desc">{{ activeThreat()!.description }}</div>
+                <div class="alert-time">{{ formatTimestamp(activeThreat()!.timestamp) }}</div>
+                <div class="alert-actions">
+                    <button class="btn-emergency-sm" (click)="callEmergency()">📞 Emergencias</button>
+                    <button class="btn-dismiss-sm" (click)="clearThreat()">Descartar</button>
+                </div>
+            </div>
+            }
+
+            <div class="history-section">
+                <button class="history-toggle" (click)="toggleThreatHistory()">
+                    <span>HISTORIAL</span>
+                    @if (threatHistory().length > 0) { <span class="history-count">{{ threatHistory().length }}</span> }
+                    <span class="history-arrow">{{ showThreatHistory() ? '▲' : '▼' }}</span>
+                </button>
+                @if (showThreatHistory() && threatHistory().length > 0) {
+                <div class="history-list">
+                    @for (t of threatHistory().slice(0, 10); track t.id) {
+                    <div class="history-item">
+                        <span class="hi-icon">{{ getThreatIcon(t.type) }}</span>
+                        <div class="hi-info">
+                            <span class="hi-msg">{{ t.message }}</span>
+                            <span class="hi-time">{{ formatTimestamp(t.timestamp) }}</span>
+                        </div>
+                        <span class="hi-sev" [class]="'sev-' + t.severity">{{ getSeverityLabel(t.severity) }}</span>
+                    </div>
+                    }
+                    <button class="btn-clear-history" (click)="clearThreatHistory()">Limpiar historial</button>
+                </div>
+                }
+                @if (showThreatHistory() && threatHistory().length === 0) {
+                <div class="history-empty">Sin incidentes registrados.</div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <div class="surveillance-controls">
+        <button class="ctrl-btn btn-sentinel" [class.btn-sentinel-active]="isAiActive()" [disabled]="!isCameraActive()"
+            (click)="toggleSentinel()">
+            <span class="ctrl-icon">{{ isAiActive() ? '■' : '▶' }}</span>
+            {{ isAiActive() ? 'DETENER SENTINEL' : 'INICIAR SENTINEL' }}
+        </button>
+        <button class="ctrl-btn btn-emergency-ctrl" (click)="callEmergency()">
+            <span class="ctrl-icon">📞</span>EMERGENCIAS
+        </button>
+    </div>
+    }
+
+    <!-- ══════════════════════════════════════════════════
+         CONVERSACIÓN
+    ══════════════════════════════════════════════════ -->
+    @if (visionMode() === 'conversacion') {
+    <div class="conversation-layout-enhanced">
+
+        <!-- Cámara izquierda -->
+        <div class="camera-panel-enhanced">
+            <div class="cam-wrapper-enhanced" [class.cam-alert]="isThreatDetected()">
+                <video #videoStream autoplay playsinline muted class="cam-feed-enhanced"></video>
+                <div class="cam-corner tl"></div>
+                <div class="cam-corner tr"></div>
+                <div class="cam-corner bl"></div>
+                <div class="cam-corner br"></div>
+                <div class="cam-label-enhanced"><span class="pulse-dot"></span>CAM ACTIVA</div>
+                <div class="bg-scan-indicator-enhanced"><span>🛡</span> BG SCAN</div>
+                <button class="btn-switch-cam-enhanced" (click)="switchCamera()">⟳</button>
+                @if (isThreatDetected() && activeThreat()) {
+                <div class="cam-threat-badge-enhanced">
+                    <span class="pulse-dot"></span>{{ activeThreat()?.message }}
+                    <button (click)="clearThreat()" class="threat-dismiss">✕</button>
+                </div>
+                }
+            </div>
+        </div>
+
+
+
+        <!-- Chat derecha -->
+        <div class="chat-panel-enhanced" [class.chat-fullwidth]="!isCameraActive()">
+
+            <!-- ── SELECTOR DE AGENTES ── -->
+            <div class="agent-selector">
+                @for (agent of getVisibleAgents(); track agent.id) {
+                <button class="agent-chip" [class.active]="currentAgent() === agent.id" (click)="selectAgent(agent.id)"
+                    [title]="agent.name">
+                    <span class="agent-icon">{{ agent.icon }}</span>
+                    <span class="agent-name">{{ agent.name }}</span>
+                </button>
+                }
+                <button class="agent-chip agent-more" (click)="showAllAgents.set(!showAllAgents())"
+                    title="Ver todos los agentes">
+                    <span class="agent-icon">{{ showAllAgents() ? '▲' : '⊕' }}</span>
+                    <span class="agent-name">{{ showAllAgents() ? 'Menos' : '+' + (availableAgents().length - 7)
+                        }}</span>
+                </button>
+            </div>
+
+            <!-- ── MENSAJES ── -->
+            <div class="chat-messages-enhanced" #chatContainer>
+                @if (chatMessages().length === 0) {
+                <div class="chat-welcome-enhanced">
+                    <div class="welcome-icon-enhanced">◈</div>
+                    <div class="welcome-title-enhanced">ORACLE AI</div>
+                    <div class="welcome-sub-enhanced">
+                        @if (!isCameraActive()) {
+                        <button class="btn-activate-cam" (click)="toggleCamera()">📷 ACTIVAR CÁMARA</button>
+                        } @else {
+                        <span>💬 Pregúntame sobre lo que ves o cualquier tema</span>
+                        }
+                    </div>
+                    <div class="welcome-hint">
+                        <span>🌐 Traductor</span>
+                        <span>📐 Math</span>
+                        <span>💻 Código</span>
+                        <span>👂 Siempre escuchando</span>
+                    </div>
+                </div>
+                }
+
+                @for (msg of chatMessages(); track msg.id) {
+                <div class="chat-bubble-wrap-enhanced" [class.bubble-user]="msg.isUser" [class.bubble-ai]="!msg.isUser"
+                    [class.bubble-alert]="msg.isAlert">
+                    <div class="chat-bubble-enhanced">
+                        <span class="bubble-avatar-enhanced">{{ msg.isUser ? '◉' : '◈' }}</span>
+                        <div class="bubble-content-enhanced">
+                            <div class="bubble-text-enhanced">{{ msg.text }}</div>
+                            <div class="bubble-time-enhanced">{{ msg.timestamp | date:'HH:mm:ss' }}</div>
+                        </div>
+                    </div>
+                </div>
+                }
+
+                @if (isProcessing()) {
+                <div class="typing-indicator-enhanced">
+                    <span class="bubble-avatar-enhanced">◈</span>
+                    <div class="typing-dots-enhanced"><span></span><span></span><span></span></div>
+                </div>
+                }
+
+                @if (isAlwaysListening() && alwaysListeningTranscript()) {
+                <div class="always-listening-transcript">
+                    <span class="alt-icon">🎤</span>
+                    <span class="alt-text">{{ alwaysListeningTranscript() }}</span>
+                </div>
+                }
+            </div>
+
+            <!-- ── INPUT ── -->
+            <div class="chat-input-area-enhanced">
+                <div class="chat-input-row-enhanced">
+                    <div class="input-wrapper-enhanced">
+                        <input class="chat-input-enhanced" type="text" [ngModel]="userInput()"
+                            (ngModelChange)="userInput.set($event)" (keydown.enter)="sendMessage()"
+                            [placeholder]="isAlwaysListening() ? '👂 Escuchando siempre...' : isListening() ? '🎤 Escuchando...' : 'Escribe un mensaje o pregunta...'"
+                            [disabled]="isProcessing()" />
+                        @if (isListening() || isAlwaysListening()) {
+                        <div class="input-listening-ring-enhanced" [class.ring-always]="isAlwaysListening()"></div>
+                        }
+                    </div>
+                    <button class="btn-mic-enhanced" [class.btn-mic-active]="isListening() && !isAlwaysListening()"
+                        [class.btn-mic-always]="isAlwaysListening()" (click)="toggleMicrophone()"
+                        [title]="isAlwaysListening() ? 'Desactivar siempre escuchando' : 'Micrófono manual'">
+                        🎤
+                    </button>
+                    <button class="btn-send-enhanced" (click)="sendMessage()"
+                        [disabled]="isProcessing() || !userInput().trim()">
+                        {{ isProcessing() ? '⟳' : '▶' }}
+                    </button>
+                </div>
+
+                <div class="chat-actions-enhanced">
+                    <button class="action-pill-enhanced" [class.pill-always-active]="isAlwaysListening()"
+                        (click)="toggleAlwaysListening()">
+                        {{ isAlwaysListening() ? '👂 ALWAYS ON' : '👂 ALWAYS OFF' }}
+                    </button>
+                    @if (!isCameraActive()) {
+                    <button class="action-pill-enhanced pill-cam" (click)="toggleCamera()">📷 CÁMARA</button>
+                    }
+                    @if (isSpeaking()) {
+                    <button class="action-pill-enhanced" (click)="stopSpeaking()">🔇 SILENCIAR</button>
+                    }
+                    @if (chatMessages().length > 0) {
+                    <button class="action-pill-enhanced" (click)="clearChat()">✕ LIMPIAR</button>
+                    }
+                    <button class="action-pill-enhanced pill-emergency" (click)="callEmergency()">📞 SOS</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    }
+
+    <!-- Panel con @if en lugar de *ngIf -->
+    @if (showAnalytics()) {
+    <app-analytics-panel [threatHistory]="threatHistory()" [totalScans]="sentinelStats().totalScans"
+        [threatsDetected]="sentinelStats().threatsDetected" [uptimeSeconds]="sentinelStats().uptime"
+        (close)="showAnalytics.set(false)" (clearHistory)="clearThreatHistory()" (refresh)="refreshAnalytics()">
+    </app-analytics-panel>
+    }
+    <!-- ══ FOOTER ══ -->
+    <footer class="vsr-footer">
+        <span class="footer-item">GTX 1660 Ti</span>
+        <span class="footer-sep">·</span>
+        <span class="footer-item">GEMMA-4</span>
+        <span class="footer-sep">·</span>
+        <span class="footer-item" [class.footer-active]="isAiActive()">{{ visionMode() === 'vigilancia' ? 'SENTINEL' :
+            'CONVERSACIÓN' }}</span>
+        @if (visionMode() === 'conversacion') {
+        <span class="footer-sep">·</span>
+        <span class="footer-item footer-agent">{{ currentAgent().toUpperCase() }}</span>
+        }
+        @if (isAlwaysListening()) { <span class="footer-sep">·</span><span class="footer-item footer-always">👂 ALWAYS
+            ON</span> }
+        @if (isProcessing()) { <span class="footer-sep">·</span><span
+            class="footer-item footer-processing">PROCESANDO</span> }
+
+        <button class="btn-clear-storage" (click)="clearLocalStorage()" title="Limpiar datos guardados">
+            🗑️ Clear Storage
+        </button>
+    </footer>
+
+</div>

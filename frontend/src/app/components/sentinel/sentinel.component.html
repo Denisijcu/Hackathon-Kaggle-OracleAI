@@ -1,0 +1,117 @@
+<div class="sentinel-container">
+  
+  <!-- HEADER -->
+  <div class="sentinel-header">
+    <h1>{{ t().title }}</h1>
+    <p>{{ t().subtitle }}</p>
+  </div>
+  
+  <!-- STATUS PANEL -->
+  <div class="status-panel" [class]="systemStatus()">
+    <div class="status-indicator"></div>
+    <div class="status-info">
+      <h3>{{ t().status }}</h3>
+      <span class="status-badge">{{ t()[systemStatus()] }}</span>
+      <p class="status-message">{{ t()[systemStatus() + 'Msg'] }}</p>
+    </div>
+    <div class="status-meta">
+      <div>{{ t().lastPing }}: {{ lastPing() | date:'HH:mm:ss' }}</div>
+      <div>{{ t().uptime }}: {{ formatUptime() }}</div>
+    </div>
+  </div>
+  
+  <!-- METRICS GRID -->
+  <div class="metrics-grid">
+    <div class="metric-card">
+      <div class="metric-title">🖥️ {{ t().cpu }}</div>
+      <div class="metric-value" [style.color]="getCpuColor()">{{ cpuPercent() }}</div>
+      <div class="metric-bar"><div class="bar-fill" [style.width]="cpuPercent()" [style.background]="getCpuColor()"></div></div>
+    </div>
+    
+    <div class="metric-card">
+      <div class="metric-title">🧠 {{ t().memory }}</div>
+      <div class="metric-value" [style.color]="getMemoryColor()">{{ memoryPercent() }}</div>
+      <div class="metric-bar"><div class="bar-fill" [style.width]="memoryPercent()" [style.background]="getMemoryColor()"></div></div>
+    </div>
+    
+    <div class="metric-card">
+      <div class="metric-title">💾 {{ t().disk }}</div>
+      <div class="metric-value" [style.color]="getDiskColor()">{{ diskPercent() }}</div>
+      <div class="metric-bar"><div class="bar-fill" [style.width]="diskPercent()" [style.background]="getDiskColor()"></div></div>
+    </div>
+    
+    <div class="metric-card">
+      <div class="metric-title">🔗 {{ t().connections }}</div>
+      <div class="metric-value">{{ activeConnections() }}</div>
+      <div class="metric-sub">active</div>
+    </div>
+    
+    <div class="metric-card">
+      <div class="metric-title">📊 {{ t().requests }}</div>
+      <div class="metric-value">{{ totalRequests() }}</div>
+      <div class="metric-sub">total</div>
+    </div>
+    
+    <div class="metric-card">
+      <div class="metric-title">⏱️ {{ t().responseTime }}</div>
+      <div class="metric-value">{{ avgResponseTime() }}</div>
+      <div class="metric-sub">ms avg</div>
+    </div>
+  </div>
+  
+  <!-- ACTION BUTTONS -->
+  <div class="action-buttons">
+    <button class="btn-refresh" (click)="refreshMetrics()">🔄 {{ t().refresh }}</button>
+    <button class="btn-scan" (click)="fullSystemScan()">🔍 {{ t().scan }}</button>
+    <button class="btn-ping" (click)="pingBackend()">📡 Ping VIC</button>
+  </div>
+  
+  <!-- LOGS & ALERTS -->
+  <div class="bottom-panels">
+    
+    <!-- LOGS -->
+    <div class="logs-panel">
+      <h3>{{ t().logs }}</h3>
+      <div class="logs-list">
+        @for (log of sentinelLogs(); track $index) {
+          <div class="log-entry" [class]="log.level">
+            <span class="log-time">{{ log.timestamp | date:'HH:mm:ss' }}</span>
+            <span class="log-message">{{ log.message }}</span>
+          </div>
+        } @empty {
+          <div class="empty-state">{{ t().noLogs }}</div>
+        }
+      </div>
+    </div>
+    
+    <!-- ALERTS -->
+    <div class="alerts-panel">
+      <div class="alerts-header">
+        <h3>{{ t().alerts }}</h3>
+        <button class="btn-clear" (click)="clearAlerts()">{{ t().clearAlerts }}</button>
+      </div>
+      <div class="alerts-list">
+        @for (alert of activeAlerts(); track alert.id) {
+          <div class="alert-entry" [class]="alert.severity">
+            <span class="alert-icon">
+              @if (alert.severity === 'high') { 🔴 }
+              @else if (alert.severity === 'medium') { 🟠 }
+              @else { 🟡 }
+            </span>
+            <span class="alert-message">{{ alert.message }}</span>
+            <span class="alert-time">{{ alert.timestamp | date:'HH:mm:ss' }}</span>
+          </div>
+        } @empty {
+          <div class="empty-state">{{ t().noAlerts }}</div>
+        }
+      </div>
+    </div>
+    
+  </div>
+  
+  <!-- FOOTER NOTE -->
+  <div class="sentinel-footer">
+    <span>VIC Sentinel v1.0 | {{ t().simulated }} Data for Demo</span>
+  </div>
+  
+</div>

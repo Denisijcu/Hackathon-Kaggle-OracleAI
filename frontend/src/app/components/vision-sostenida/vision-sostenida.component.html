@@ -1,0 +1,107 @@
+<div class="vision-container">
+    <div class="vision-header">
+        <h2 class="title">{{ app.visionTranslations().title }}</h2>
+        <p class="subtitle">{{ app.visionTranslations().subtitle }}</p>
+    </div>
+
+    <div class="vision-grid">
+        <div class="video-panel">
+            <div class="video-wrapper" [class.active]="isCameraActive()">
+                @if (isCameraActive()) {
+                    <video #cameraVideo autoplay playsinline muted></video>
+                } @else {
+                    <div class="camera-placeholder">
+                        <span class="camera-icon">📷</span>
+                        <p>{{ app.visionTranslations().cameraInactive }}</p>
+                        <button (click)="toggleCamera()" class="btn-primary">
+                            {{ app.visionTranslations().btnActivate }}
+                        </button>
+                    </div>
+                }
+            </div>
+
+            <div class="video-controls">
+                <button (click)="toggleCamera()" class="btn-camera" [class.active]="isCameraActive()">
+                    {{ isCameraActive() ? '📷 ' + app.visionTranslations().btnDeactivate : '📷 ' + app.visionTranslations().btnActivate }}
+                </button>
+                <button (click)="captureAndAnalyze()" class="btn-capture">
+                    📸 {{ app.visionTranslations().btnCapture }}
+                </button>
+            </div>
+        </div>
+
+        <div class="vision-panel">
+            <div class="vision-status">
+                <div class="status-indicator">
+                    <span class="status-dot" [class.active]="liveVisionActive()"></span>
+                    <span>{{ liveVisionActive() ? app.visionTranslations().statusActive : app.visionTranslations().statusInactive }}</span>
+                    @if (isProcessing()) {
+                        <span class="processing-spinner">🧠 {{ app.visionTranslations().analyzing }}</span>
+                    }
+                </div>
+
+                <div class="vision-actions">
+                    @if (!liveVisionActive()) {
+                        <button (click)="startLiveVision()" [disabled]="!isCameraActive()" class="btn-start">
+                            ▶ {{ app.visionTranslations().btnContinuous }}
+                        </button>
+                    } @else {
+                        <button (click)="stopLiveVision()" class="btn-stop">
+                            ⏹ {{ app.visionTranslations().btnStop }}
+                        </button>
+                    }
+                </div>
+            </div>
+
+            @if (lastDescription()) {
+                <div class="last-description">
+                    <div class="desc-header">
+                        <span>🎯 {{ app.visionTranslations().lastDet }}</span>
+                        <div class="desc-actions">
+                            <button (click)="speakDescription()" [disabled]="isSpeaking()" class="btn-speak">🔊</button>
+                            <button (click)="stopSpeaking()" class="btn-stop-speak">⏹</button>
+                        </div>
+                    </div>
+                    <p class="description-text">{{ lastDescription() }}</p>
+                </div>
+            }
+
+            <div class="vision-config">
+                <h3>⚙️ {{ app.visionTranslations().settings }}</h3>
+                <div class="config-row">
+                    <label>{{ app.visionTranslations().interval }}: {{ intervalSeconds() }}s</label>
+                    <input type="range" min="3" max="30" step="1" [(ngModel)]="intervalSeconds"
+                        (change)="updateInterval()">
+                </div>
+                <div class="config-row">
+                    <label>{{ app.visionTranslations().sensitivity }}: {{ sensitivity() | number:'1.1-1' }}</label>
+                    <input type="range" min="0.1" max="0.8" step="0.05" [(ngModel)]="sensitivity"
+                        (change)="updateSensitivity()">
+                    <small>{{ app.visionTranslations().sensHelp }}</small>
+                </div>
+            </div>
+        </div>
+
+        <div class="history-panel">
+            <div class="history-header">
+                <h3>📋 {{ app.visionTranslations().history }}</h3>
+                <button (click)="clearHistory()" class="btn-clear">{{ app.visionTranslations().clear }}</button>
+            </div>
+
+            <div class="history-list">
+                @for (item of visionHistory(); track $index) {
+                    <div class="history-item">
+                        <span class="history-time">{{ item.timestamp }}</span>
+                        <p class="history-desc">{{ item.description }}</p>
+                    </div>
+                } @empty {
+                    <div class="history-empty">
+                        <span>📭</span>
+                        <p>{{ app.visionTranslations().noDesc }}</p>
+                        <small>{{ app.visionTranslations().noDescHelp }}</small>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>

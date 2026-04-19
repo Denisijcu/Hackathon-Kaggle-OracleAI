@@ -1,0 +1,123 @@
+<div class="settings-container">
+
+    <!-- HEADER -->
+    <div class="settings-header">
+        <h1>{{ t().title }}</h1>
+        <p>{{ t().subtitle }}</p>
+    </div>
+
+    <!-- ── SECCIÓN: API KEY ──────────────────────────────────────────────── -->
+    <div class="settings-section">
+        <h2>🔑 Google AI API Key</h2>
+        <p class="section-hint">Obtén tu key gratis en <strong>aistudio.google.com/apikey</strong></p>
+
+        <div class="apikey-row">
+            <input
+                [type]="showApiKey() ? 'text' : 'password'"
+                [ngModel]="googleApiKey()"
+                (ngModelChange)="googleApiKey.set($event)"
+                placeholder="AIza..."
+                class="config-input flex-1"
+            >
+            <button (click)="showApiKey.set(!showApiKey())" class="btn-icon" title="Mostrar/ocultar">
+                {{ showApiKey() ? '🙈' : '👁️' }}
+            </button>
+            <button (click)="saveApiKey()" class="btn-save">
+                💾 Guardar
+            </button>
+        </div>
+
+        <!-- Estado de conexión -->
+        <div class="endpoint-status">
+            <div class="status-indicator">
+                <span class="status-dot" [style.backgroundColor]="getStatusColor()"></span>
+                <span>{{ getStatusText() }}</span>
+                @if (lastLatency()) {
+                    <span class="latency">{{ lastLatency() }}ms</span>
+                }
+            </div>
+            <button (click)="testCurrentConnection()" class="btn-test">
+                🔄 {{ t().testConnection || 'Probar conexión' }}
+            </button>
+        </div>
+    </div>
+
+    <!-- ── SECCIÓN: MODELO ACTIVO ─────────────────────────────────────────── -->
+    <div class="settings-section">
+        <h2>{{ t().modelSection || '🤖 Modelo Activo' }}</h2>
+
+        <div class="current-model-card">
+            <div class="model-info">
+                <div>
+                    <span class="model-name">{{ currentModel().name }}</span>
+                    <span class="tag-badge" [style.background]="getTagColor(currentModel().tag)">
+                        {{ getTagLabel(currentModel().tag) }}
+                    </span>
+                    @if (currentModel().recommended) {
+                        <span class="model-badge recommended">{{ t().recommended || '⭐ Recomendado' }}</span>
+                    }
+                </div>
+                <span class="model-id-chip">{{ currentModel().id }}</span>
+            </div>
+            <div class="model-details">
+                <span>📦 {{ currentModel().size }}</span>
+                <span>🧠 {{ currentModel().contextWindow }}</span>
+                <span>🖼️ Multimodal: {{ currentModel().multimodal ? '✅' : '❌' }}</span>
+                <span>⚡ Function calling: {{ currentModel().functionCalling ? '✅' : '❌' }}</span>
+            </div>
+            <p class="model-desc" style="margin-top: 8px; color: #888; font-size: 12px;">
+                {{ currentModel().description }}
+            </p>
+        </div>
+
+        <!-- Grid de modelos disponibles -->
+        <div class="models-grid">
+            @for (model of availableModels(); track model.id) {
+                <div class="model-card" [class.active]="currentModel().id === model.id">
+                    <div class="model-header">
+                        <strong>{{ model.name }}</strong>
+                        <span class="tag-badge sm" [style.background]="getTagColor(model.tag)">
+                            {{ getTagLabel(model.tag) }}
+                        </span>
+                    </div>
+
+                    <div class="model-specs">
+                        <span>{{ model.size }}</span>
+                        <span>{{ model.contextWindow }}</span>
+                    </div>
+
+                    <p class="model-desc">{{ model.description }}</p>
+
+                    <div class="model-footer">
+                        <code class="model-id-chip sm">{{ model.id }}</code>
+                        @if (currentModel().id === model.id) {
+                            <span class="active-label">✅ Activo</span>
+                        } @else {
+                            <button
+                                (click)="switchToModel(model)"
+                                [disabled]="isSwitching()"
+                                class="btn-switch">
+                                {{ isSwitching() ? '...' : (t().switchModel || 'Activar') }}
+                            </button>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+
+        <!-- Nota sobre modelos E2B/E4B -->
+        <div class="info-note">
+            <span>ℹ️</span>
+            <p>Los modelos <strong>Gemma 4 E2B y E4B</strong> están disponibles para descarga en HuggingFace y Ollama,
+            pero aún no están en el hosted API de Google. Si los corres localmente, usa el adaptador de LM Studio.</p>
+        </div>
+    </div>
+
+    <!-- TOAST -->
+    @if (testResult()) {
+        <div class="toast" [class.success]="testResult()!.success" [class.error]="!testResult()!.success">
+            {{ testResult()!.message }}
+        </div>
+    }
+
+</div>

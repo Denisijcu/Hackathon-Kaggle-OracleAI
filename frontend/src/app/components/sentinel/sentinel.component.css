@@ -1,0 +1,676 @@
+/* sentinel.component.css - Versión Mejorada */
+
+/* ============================================
+   VARIABLES GLOBALES
+   ============================================ */
+:host {
+  --primary: #00ff88;
+  --primary-dark: #00cc6a;
+  --primary-glow: rgba(0, 255, 136, 0.2);
+  --secondary: #00aaff;
+  --secondary-glow: rgba(0, 170, 255, 0.2);
+  --warning: #ffaa00;
+  --warning-glow: rgba(255, 170, 0, 0.2);
+  --danger: #ff4444;
+  --danger-glow: rgba(255, 68, 68, 0.2);
+  --bg-dark: #0a0a0f;
+  --bg-card: rgba(10, 10, 15, 0.8);
+  --bg-elevated: rgba(20, 20, 30, 0.9);
+  --border: rgba(51, 51, 68, 0.5);
+  --text-primary: #e0e0e0;
+  --text-secondary: #8888aa;
+  --text-muted: #555570;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ============================================
+   CONTAINER PRINCIPAL
+   ============================================ */
+.sentinel-container {
+  padding: clamp(16px, 4vw, 32px);
+  background: linear-gradient(135deg, #0a0a0f 0%, #0f0f1a 100%);
+  min-height: calc(100vh - 64px);
+  color: var(--text-primary);
+  font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+  position: relative;
+}
+
+/* Ruido de fondo sutil */
+.sentinel-container::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ============================================
+   HEADER
+   ============================================ */
+.sentinel-header {
+  text-align: center;
+  margin-bottom: clamp(24px, 6vw, 40px);
+  position: relative;
+  z-index: 1;
+  animation: fadeInDown 0.5s ease-out;
+}
+
+.sentinel-header h1 {
+  font-size: clamp(1.8rem, 6vw, 3rem);
+  margin: 0;
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  text-shadow: 0 0 20px rgba(0, 255, 136, 0.3);
+}
+
+.sentinel-header p {
+  color: var(--text-secondary);
+  margin-top: 8px;
+  font-size: clamp(0.8rem, 3vw, 0.9rem);
+  letter-spacing: 0.5px;
+}
+
+/* ============================================
+   STATUS PANEL
+   ============================================ */
+.status-panel {
+  background: var(--bg-card);
+  backdrop-filter: blur(10px);
+  border-radius: var(--radius-lg);
+  padding: clamp(16px, 4vw, 24px);
+  margin-bottom: 24px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  border-left: 4px solid;
+  border-right: 1px solid var(--border);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  transition: var(--transition);
+  animation: fadeInUp 0.5s ease-out;
+  position: relative;
+  z-index: 1;
+}
+
+.status-panel:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.status-panel.online { border-left-color: var(--primary); }
+.status-panel.degraded { border-left-color: var(--warning); }
+.status-panel.offline { border-left-color: var(--danger); }
+
+.status-indicator {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  animation: pulse 2s infinite;
+  flex-shrink: 0;
+}
+
+.status-panel.online .status-indicator { 
+  background: var(--primary); 
+  box-shadow: 0 0 20px var(--primary);
+}
+.status-panel.degraded .status-indicator { 
+  background: var(--warning); 
+  box-shadow: 0 0 20px var(--warning);
+}
+.status-panel.offline .status-indicator { 
+  background: var(--danger); 
+  box-shadow: 0 0 20px var(--danger);
+}
+
+.status-info { 
+  flex: 1; 
+  min-width: 150px;
+}
+
+.status-info h3 { 
+  margin: 0 0 4px; 
+  font-size: 0.75rem; 
+  color: var(--text-muted);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.status-badge { 
+  font-size: clamp(1.2rem, 4vw, 1.5rem); 
+  font-weight: bold;
+  display: block;
+}
+
+.status-message { 
+  margin: 4px 0 0; 
+  font-size: 0.8rem; 
+  color: var(--text-secondary);
+}
+
+.status-meta { 
+  text-align: right; 
+  font-size: 0.75rem; 
+  color: var(--text-muted);
+  font-family: monospace;
+}
+
+.status-meta div {
+  margin: 4px 0;
+}
+
+/* ============================================
+   METRICS GRID
+   ============================================ */
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+  position: relative;
+  z-index: 1;
+}
+
+.metric-card {
+  background: var(--bg-card);
+  backdrop-filter: blur(10px);
+  border-radius: var(--radius-md);
+  padding: clamp(12px, 3vw, 16px);
+  text-align: center;
+  border: 1px solid var(--border);
+  transition: var(--transition);
+  cursor: pointer;
+}
+
+.metric-card:hover {
+  border-color: var(--primary);
+  transform: translateY(-4px);
+  box-shadow: 0 4px 20px rgba(0, 255, 136, 0.1);
+}
+
+.metric-title {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.metric-value {
+  font-size: clamp(1.5rem, 5vw, 2rem);
+  font-weight: bold;
+  font-family: monospace;
+  transition: color 0.3s;
+}
+
+.metric-bar {
+  height: 3px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+  margin-top: 12px;
+  overflow: hidden;
+}
+
+.bar-fill {
+  height: 100%;
+  border-radius: 2px;
+  transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.bar-fill::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+.metric-sub {
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  margin-top: 8px;
+  text-transform: uppercase;
+}
+
+/* ============================================
+   ACTION BUTTONS
+   ============================================ */
+.action-buttons {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  position: relative;
+  z-index: 1;
+}
+
+.action-buttons button {
+  padding: 10px 20px;
+  border-radius: var(--radius-sm);
+  font-family: monospace;
+  font-weight: 600;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: var(--transition);
+  border: none;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  position: relative;
+  overflow: hidden;
+}
+
+.action-buttons button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s;
+}
+
+.action-buttons button:hover::before {
+  left: 100%;
+}
+
+.btn-refresh {
+  background: var(--bg-elevated);
+  color: var(--secondary);
+  border: 1px solid var(--secondary);
+}
+
+.btn-refresh:hover {
+  background: var(--secondary-glow);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 170, 255, 0.2);
+}
+
+.btn-scan {
+  background: var(--bg-elevated);
+  color: var(--primary);
+  border: 1px solid var(--primary);
+}
+
+.btn-scan:hover {
+  background: var(--primary-glow);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 255, 136, 0.2);
+}
+
+.btn-ping {
+  background: var(--bg-elevated);
+  color: var(--warning);
+  border: 1px solid var(--warning);
+}
+
+.btn-ping:hover {
+  background: var(--warning-glow);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 170, 0, 0.2);
+}
+
+.action-buttons button:active {
+  transform: translateY(0);
+}
+
+/* ============================================
+   BOTTOM PANELS
+   ============================================ */
+.bottom-panels {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+  position: relative;
+  z-index: 1;
+}
+
+.logs-panel, .alerts-panel {
+  background: var(--bg-card);
+  backdrop-filter: blur(10px);
+  border-radius: var(--radius-lg);
+  padding: clamp(12px, 3vw, 20px);
+  border: 1px solid var(--border);
+  transition: var(--transition);
+}
+
+.logs-panel:hover, .alerts-panel:hover {
+  border-color: var(--primary);
+  box-shadow: 0 4px 20px rgba(0, 255, 136, 0.05);
+}
+
+.logs-panel h3, .alerts-panel h3 {
+  margin: 0 0 16px;
+  font-size: 0.85rem;
+  color: var(--primary);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.logs-panel h3::before {
+  content: '📋';
+  font-size: 1rem;
+}
+
+.alerts-panel h3::before {
+  content: '⚠️';
+  font-size: 1rem;
+}
+
+.logs-list, .alerts-list {
+  max-height: 300px;
+  overflow-y: auto;
+  font-size: 0.8rem;
+  scrollbar-width: thin;
+}
+
+/* Scrollbar personalizada */
+.logs-list::-webkit-scrollbar,
+.alerts-list::-webkit-scrollbar {
+  width: 4px;
+}
+
+.logs-list::-webkit-scrollbar-track,
+.alerts-list::-webkit-scrollbar-track {
+  background: var(--bg-dark);
+  border-radius: 4px;
+}
+
+.logs-list::-webkit-scrollbar-thumb,
+.alerts-list::-webkit-scrollbar-thumb {
+  background: var(--primary);
+  border-radius: 4px;
+}
+
+/* Log entries */
+.log-entry {
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--border);
+  font-family: monospace;
+  display: flex;
+  gap: 12px;
+  align-items: baseline;
+  transition: var(--transition);
+}
+
+.log-entry:hover {
+  background: rgba(0, 255, 136, 0.05);
+  transform: translateX(4px);
+}
+
+.log-time {
+  color: var(--text-muted);
+  width: 70px;
+  flex-shrink: 0;
+  font-size: 0.7rem;
+}
+
+.log-message {
+  flex: 1;
+  word-break: break-word;
+}
+
+.log-entry.info .log-message { 
+  color: var(--secondary);
+}
+.log-entry.warning .log-message { 
+  color: var(--warning);
+}
+.log-entry.error .log-message { 
+  color: var(--danger);
+}
+
+/* Alerts header */
+.alerts-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.btn-clear {
+  background: none;
+  border: 1px solid var(--danger);
+  color: var(--danger);
+  padding: 4px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.7rem;
+  font-weight: 600;
+  transition: var(--transition);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.btn-clear:hover {
+  background: var(--danger-glow);
+  transform: translateY(-1px);
+}
+
+/* Alert entries */
+.alert-entry {
+  padding: 10px 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-radius: var(--radius-sm);
+  margin-bottom: 6px;
+  transition: var(--transition);
+  cursor: pointer;
+}
+
+.alert-entry:hover {
+  transform: translateX(4px);
+}
+
+.alert-entry.high { 
+  background: rgba(255, 68, 68, 0.1); 
+  border-left: 3px solid var(--danger);
+}
+.alert-entry.medium { 
+  background: rgba(255, 170, 0, 0.1); 
+  border-left: 3px solid var(--warning);
+}
+.alert-entry.low { 
+  background: rgba(0, 255, 136, 0.05); 
+  border-left: 3px solid var(--primary);
+}
+
+.alert-icon { 
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+
+.alert-message { 
+  flex: 1;
+  font-size: 0.8rem;
+}
+
+.alert-time { 
+  color: var(--text-muted); 
+  font-size: 0.65rem;
+  font-family: monospace;
+  flex-shrink: 0;
+}
+
+/* Empty state */
+.empty-state {
+  text-align: center;
+  color: var(--text-muted);
+  padding: 40px 20px;
+  font-style: italic;
+  font-size: 0.8rem;
+}
+
+/* ============================================
+   FOOTER
+   ============================================ */
+.sentinel-footer {
+  margin-top: 32px;
+  text-align: center;
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  border-top: 1px solid var(--border);
+  padding-top: 20px;
+  position: relative;
+  z-index: 1;
+}
+
+/* ============================================
+   ANIMACIONES
+   ============================================ */
+@keyframes pulse {
+  0%, 100% { 
+    opacity: 1; 
+    transform: scale(1);
+  }
+  50% { 
+    opacity: 0.7; 
+    transform: scale(1.08);
+  }
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+@media (max-width: 768px) {
+  .sentinel-container {
+    padding: 16px;
+  }
+  
+  .status-panel {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .status-info {
+    text-align: center;
+  }
+  
+  .status-meta {
+    text-align: center;
+  }
+  
+  .action-buttons button {
+    flex: 1;
+    min-width: 120px;
+  }
+  
+  .bottom-panels {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  
+  .log-entry {
+    flex-direction: column;
+    gap: 4px;
+  }
+  
+  .log-time {
+    width: auto;
+  }
+  
+  .alert-entry {
+    flex-wrap: wrap;
+  }
+  
+  .alert-time {
+    width: 100%;
+    margin-left: 24px;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  .metrics-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  
+  .bottom-panels {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (min-width: 1440px) {
+  .sentinel-container {
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+  
+  .metrics-grid {
+    grid-template-columns: repeat(6, 1fr);
+  }
+}
+
+/* ============================================
+   UTILITIES ADICIONALES
+   ============================================ */
+/* Efecto de texto brillante */
+@keyframes glow {
+  0%, 100% { text-shadow: 0 0 5px currentColor; }
+  50% { text-shadow: 0 0 20px currentColor; }
+}
+
+.metric-card:hover .metric-value {
+  animation: glow 1.5s infinite;
+}
+
+/* Estado de carga para botones */
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+/* Transición suave para números */
+.metric-value {
+  transition: all 0.3s ease;
+}

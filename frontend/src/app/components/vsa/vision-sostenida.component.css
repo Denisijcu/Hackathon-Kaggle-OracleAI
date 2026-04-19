@@ -1,0 +1,82 @@
+.alert-panel {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  padding: 16px 24px;
+  border-radius: 12px;
+  animation: slideDown 0.3s ease;
+}
+
+.alert-panel.danger {
+  background: linear-gradient(135deg, #ff0000, #cc0000);
+  border-left: 4px solid #ffcc00;
+  box-shadow: 0 4px 20px rgba(255,0,0,0.4);
+}
+
+.alert-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.alert-icon {
+  font-size: 28px;
+  animation: pulse 1s infinite;
+}
+
+.alert-message {
+  color: white;
+  font-weight: bold;
+  font-size: 1.1rem;
+}
+
+.btn-close-alert {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 20px;
+  cursor: pointer;
+  padding: 4px 8px;
+}
+
+.config-section {
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid #333;
+}
+
+.config-section h4 {
+  margin-bottom: 12px;
+  color: #00ff88;
+  font-size: 0.9rem;
+}
+
+.btn-save-config {
+  width: 100%;
+  margin-top: 16px;
+  padding: 10px;
+  background: #00ff88;
+  color: #000;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}

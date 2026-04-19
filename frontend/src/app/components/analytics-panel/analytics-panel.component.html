@@ -1,0 +1,105 @@
+<div class="grid grid-cols-1 md:grid-cols-4 gap-4 mt-8 animate-in fade-in duration-700">
+
+    <div class="panel-card relative overflow-hidden group min-h-[300px]">
+        <h3 class="stat-label mb-4">{{ app.selectedLanguage() === 'es' ? 'MAPA DE IMPACTO' : 'GLOBAL IMPACT MAP' }}</h3>
+
+        <div class="h-64 relative">
+            <div class="absolute inset-0 bg-center bg-no-repeat opacity-20 group-hover:opacity-40 transition-opacity duration-700"
+                style="background-image: url('assets/world-grid.svg'); background-size: 110% auto;">
+            </div>
+
+            <div class="absolute inset-0 opacity-30"
+                style="background-image: radial-gradient(#22c55e 1.5px, transparent 1.5px); background-size: 20px 20px; mask-image: radial-gradient(circle, black 40%, transparent 100%);">
+            </div>
+
+            <div class="relative h-full w-full">
+                <div
+                    class="absolute top-[35%] left-[22%] w-3 h-3 bg-cyan-400 rounded-full animate-ping shadow-[0_0_15px_#22d3ee]">
+                </div>
+
+                <div class="absolute top-[30%] left-[48%] w-2 h-2 bg-green-500 rounded-full animate-ping"></div>
+
+                <div
+                    class="absolute top-[65%] left-[32%] w-2.5 h-2.5 bg-magenta-500 rounded-full animate-pulse shadow-[0_0_10px_#d946ef]">
+                </div>
+
+                <div class="absolute top-[45%] left-[75%] w-2 h-2 bg-yellow-400 rounded-full animate-ping opacity-60">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-6 relative overflow-hidden bg-zinc-900/40 border border-green-500/10 rounded-sm py-1.5">
+    <div class="absolute left-0 top-0 bottom-0 w-12 bg-gradient-to-r from-zinc-900 to-transparent z-10"></div>
+    <div class="absolute right-0 top-0 bottom-0 w-12 bg-gradient-to-l from-zinc-900 to-transparent z-10"></div>
+    
+    <div class="whitespace-nowrap animate-marquee flex gap-12 items-center">
+        @for (score of sportsScores(); track $index) {
+            <div class="flex items-center gap-3">
+                <span class="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse shadow-[0_0_8px_#22c55e]"></span>
+                <span class="text-[10px] font-mono text-zinc-400 tracking-wider">
+                    {{ score | uppercase }}
+                </span>
+            </div>
+        }
+    </div>
+</div>
+
+    <div class="panel-card">
+        <h3 class="stat-label mb-4">{{ app.dashboardTranslations().agentsTitle }} (STATS)</h3>
+        <div class="space-y-5">
+            <div>
+                <div class="flex justify-between text-[9px] mb-1 font-bold">
+                    <span>{{ app.dashboardTranslations().stats.edu | uppercase }}</span>
+                    <span class="text-cyan-400">{{ totalEdu() }}</span>
+                </div>
+                <div class="w-full bg-zinc-900/50 h-1 rounded-full overflow-hidden">
+                    <div class="glow-bar bg-cyan-500 shadow-[0_0_8px_#06b6d4]"
+                        [style.width.%]="(totalEdu() / 50) * 100"></div>
+                </div>
+            </div>
+            <div>
+                <div class="flex justify-between text-[9px] mb-1 font-bold">
+                    <span>{{ app.dashboardTranslations().stats.health | uppercase }}</span>
+                    <span class="text-magenta-500">{{ totalHealth() }}</span>
+                </div>
+                <div class="w-full bg-zinc-900/50 h-1 rounded-full overflow-hidden">
+                    <div class="glow-bar bg-magenta-500 shadow-[0_0_8px_#d946ef]"
+                        [style.width.%]="(totalHealth() / 50) * 100"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="panel-card overflow-hidden">
+        <h3 class="stat-label mb-4">NEURAL TRENDS</h3>
+        <div class="flex items-end gap-1.5 h-24 pt-2">
+            @for (bar of [40, 75, 50, 90, 60, 85, 95]; track $index) {
+            <div class="flex-1 bg-green-500/10 border-t-2 border-green-500/40 rounded-t-sm animate-pulse"
+                [style.height.%]="bar" [style.animation-delay]="$index * 150 + 'ms'"></div>
+            }
+        </div>
+    </div>
+
+    <div class="panel-card">
+        <h3 class="stat-label mb-4">LIVE USER FEED</h3>
+        <div class="space-y-2 max-h-32 overflow-hidden text-[9px] font-mono">
+            <div class="flex items-center gap-2 p-1.5 rounded bg-green-500/5 border border-green-500/10">
+                <span class="w-1.5 h-1.5 bg-cyan-500 rounded-full animate-pulse"></span>
+                <span class="text-green-400 opacity-80">[SYS_AUTH]</span>
+                <span class="text-zinc-400">Child: Math Query</span>
+            </div>
+            <div class="flex items-center gap-2 p-1.5 rounded bg-green-500/5 border border-green-500/10">
+                <span class="w-1.5 h-1.5 bg-magenta-500 rounded-full animate-pulse"></span>
+                <span class="text-green-400 opacity-80">[SYS_AUTH]</span>
+                <span class="text-zinc-400">Senior: Health Check</span>
+            </div>
+            <div class="flex items-center gap-2 p-1.5 rounded bg-green-500/5 border border-green-500/10">
+                <span class="w-1.5 h-1.5 bg-yellow-500 rounded-full"></span>
+                <span class="text-green-400 opacity-80">[VIC_CORE]</span>
+                <span class="text-zinc-400">Model: Gemma-4 Loaded</span>
+            </div>
+        </div>
+    </div>
+
+</div>

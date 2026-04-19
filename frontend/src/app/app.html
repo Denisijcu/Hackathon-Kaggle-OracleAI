@@ -1,0 +1,75 @@
+<div class="app-container">
+  <nav class="navbar">
+    <div class="nav-brand">
+      <span class="nav-logo">🦾</span>
+      <span class="nav-title">OracleAI</span>
+      <span class="nav-badge">v4.1</span>
+    </div>
+
+    <div class="nav-links">
+      <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
+        {{ navTranslations().home }}
+      </a>
+      <a routerLink="/vision" routerLinkActive="active" class="nav-link">
+        👁️ VSA
+      </a>
+      <a routerLink="/reserva" routerLinkActive="active" class="nav-link">
+        🛰️ LiveVision
+      </a>
+
+      <a routerLink="/user-guide" routerLinkActive="active" class="nav-link">
+        📚 User Guide
+      </a>
+      <!--
+      <a routerLink="/about" routerLinkActive="active">
+        {{ navTranslations().about }}
+      </a>
+      <a routerLink="/docs" routerLinkActive="active">
+        {{ navTranslations().docs }}
+      </a>
+      <a routerLink="/contact" routerLinkActive="active">
+        {{ navTranslations().contact }}
+      </a>
+    -->
+
+      <!-- 🔥 SENTINEL - NUEVO COMPONENTE -->
+      <a routerLink="/sentinel" routerLinkActive="active">
+        {{ navTranslations().sentinel }}
+      </a>
+      <a routerLink="/settings" routerLinkActive="active" class="settings-link">
+        {{ navTranslations().settings }}
+      </a>
+    </div>
+
+    <div class="nav-languages">
+      <!-- Grupo 1: Occidente -->
+      <button (click)="changeLanguage('es')" [class.active]="selectedLanguage() === 'es'" title="Español">ES</button>
+      <button (click)="changeLanguage('en')" [class.active]="selectedLanguage() === 'en'" title="English">EN</button>
+      <button (click)="changeLanguage('fr')" [class.active]="selectedLanguage() === 'fr'" title="Français">FR</button>
+      <button (click)="changeLanguage('pt')" [class.active]="selectedLanguage() === 'pt'" title="Português">PT</button>
+      <button (click)="changeLanguage('it')" [class.active]="selectedLanguage() === 'it'" title="Italiano">IT</button>
+      <!-- 🔥 Faltaba active -->
+
+      <span class="separator">|</span>
+
+      <!-- Grupo 2: Asia -->
+      <button (click)="changeLanguage('zh')" [class.active]="selectedLanguage() === 'zh'" title="简体中文">中</button>
+      <button (click)="changeLanguage('ko')" [class.active]="selectedLanguage() === 'ko'" title="한국어">한</button>
+      <button (click)="changeLanguage('hi')" [class.active]="selectedLanguage() === 'hi'" title="हिन्दी">हि</button>
+
+      <span class="separator">|</span>
+
+      <!-- Grupo 3: Europa del Este -->
+      <button (click)="changeLanguage('ru')" [class.active]="selectedLanguage() === 'ru'" title="Русский">RU</button>
+      <!-- 🔥 Añadí active y texto corto -->
+      <button (click)="changeLanguage('hu')" [class.active]="selectedLanguage() === 'hu'" title="Magyar">HU</button>
+      <!-- 🔥 Añadí active y texto corto -->
+    </div>
+  </nav>
+
+  <main class="main-content">
+    <router-outlet />
+  </main>
+
+  <app-footer />
+</div>

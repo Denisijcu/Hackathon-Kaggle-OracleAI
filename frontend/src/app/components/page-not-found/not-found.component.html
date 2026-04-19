@@ -1,0 +1,77 @@
+<div class="not-found-container">
+  <!-- Efecto escáner -->
+  <div class="scanline"></div>
+  
+  <!-- Fondo de cuadrícula -->
+  <div class="grid-bg"></div>
+  
+  <div class="content">
+    <!-- Logo animado -->
+    <div class="logo-container">
+      <div class="logo-glow"></div>
+      <div class="logo">
+
+        🔮
+
+      </div>
+      <div class="logo-ring"></div>
+    </div>
+    
+    <!-- Código de error con efecto glitch -->
+    <div class="error-code">
+      <span class="glitch" data-text="404">404</span>
+    </div>
+    
+    <!-- Mensaje principal -->
+    <h1 class="title">RUTA NO ENCONTRADA</h1>
+    
+    <!-- Línea de estado -->
+    <div class="status-line">
+      <span class="status-dot"></span>
+      <span class="status-text">STATUS: VOID_POINT</span>
+      <span class="status-dot"></span>
+    </div>
+    
+    <!-- Descripción técnica -->
+    <div class="terminal-box">
+      <div class="terminal-header">
+        <span class="terminal-dot red"></span>
+        <span class="terminal-dot yellow"></span>
+        <span class="terminal-dot green"></span>
+        <span class="terminal-title">ORACLE_TERMINAL</span>
+      </div>
+      <div class="terminal-body">
+        <p class="line">$ El sistema no puede encontrar la ruta solicitada</p>
+        <p class="line blink">$ ¿Deseas volver al hub principal? <span class="cursor">_</span></p>
+      </div>
+    </div>
+    
+    <!-- Botones de acción -->
+    <div class="action-buttons">
+      <a routerLink="/" class="btn-primary">
+        <span class="btn-icon">🏠</span>
+        <span>VOLVER AL HUB</span>
+        <span class="btn-glow"></span>
+      </a>
+      
+      <button (click)="goBack()" class="btn-secondary">
+        <span class="btn-icon">↩️</span>
+        <span>REGRESAR</span>
+      </button>
+    </div>
+    
+    <!-- Footer técnico -->
+    <div class="footer-info">
+      <div class="footer-line">
+        <span>ORACLE STUDIO v4.2</span>
+        <span>|</span>
+        <span>GEMMA-4-26B</span>
+        <span>|</span>
+        <span>ERROR_404</span>
+      </div>
+      <div class="footer-timestamp">
+        {{ timestamp }}
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,8 @@
+{
+  "/api": {
+    "target": "https://Denisijcu-oracle-hub-backend.hf.space",
+    "secure": false,
+    "timeout": 360000,
+    "proxyTimeout": 360000
+  }
+}

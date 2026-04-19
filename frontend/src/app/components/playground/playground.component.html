@@ -1,0 +1,318 @@
+<div class="min-h-screen bg-black text-green-400 font-mono p-6 grid grid-cols-12 gap-6 relative overflow-hidden m-4">
+    <div class="scanline-effect"></div>
+
+
+    <!-- 🔥 INDICADOR FLOTANTE DE GRABACIÓN -->
+    @if (isRecording()) {
+    <div
+        class="fixed bottom-24 left-1/2 transform -translate-x-1/2 bg-red-600/90 backdrop-blur-md text-white px-6 py-3 rounded-full animate-pulse z-50 shadow-[0_0_20px_rgba(239,68,68,0.6)] border border-red-400">
+        <span class="flex items-center gap-2">
+            <span class="text-xl">🎤</span>
+            <span class="font-black text-xs tracking-widest">ESCUCHANDO...</span>
+            <span class="w-2 h-2 bg-white rounded-full animate-ping"></span>
+        </span>
+    </div>
+    }
+
+    @if (showError()) {
+    <div
+        class="fixed top-4 right-4 bg-red-900/90 border border-red-500 text-red-300 px-6 py-3 rounded-lg z-50 animate-in slide-in-from-right duration-300 shadow-[0_0_15px_rgba(239,68,68,0.4)]">
+        <div class="flex items-center gap-2 font-black text-xs">
+            <span>❌ SYSTEM_ERROR:</span>
+            <span>{{ errorMessage() }}</span>
+        </div>
+    </div>
+    }
+
+    @if (showSuccess()) {
+    <div
+        class="fixed top-4 right-4 bg-green-900/90 border border-green-500 text-green-300 px-6 py-3 rounded-lg z-50 animate-in slide-in-from-right duration-300 shadow-[0_0_15px_rgba(34,197,94,0.4)]">
+        <div class="flex items-center gap-2 font-black text-xs">
+            <span>✅ SUCCESS:</span>
+            <span>{{ successMessage() }}</span>
+        </div>
+    </div>
+    }
+
+
+
+    <div
+        class="fixed top-4 left-4 z-50 flex items-center gap-2 bg-black/80 px-3 py-1 rounded-full border border-green-900">
+        <div class="w-2 h-2 rounded-full" [class.bg-green-500]="isBackendOnline()"
+            [class.bg-red-500]="!isBackendOnline()" [class.animate-pulse]="isBackendOnline()"></div>
+        <span class="text-[10px] font-bold">{{ isBackendOnline() ? 'VIC_CORE_ONLINE :8080' : 'VIC_CORE_OFFLINE'
+            }}</span>
+    </div>
+
+    <div class="col-span-12 lg:col-span-8 flex flex-col gap-6 relative z-20">
+
+        <header class="border-b border-green-900/50 pb-4 flex justify-between items-center">
+            <div>
+                <h1 class="text-3xl font-black tracking-tighter italic text-green-500">
+                    ORACLEAI <span class="text-white opacity-50">V4.1</span>
+                </h1>
+                <p class="text-[10px] opacity-70 tracking-[0.2em]">
+                    {{ app.footerTranslations().desc.toUpperCase() }}
+                </p>
+            </div>
+
+            <div class="text-right hidden md:block opacity-60">
+                <p class="text-[9px] font-mono">ENGINE: GEMMA-4-26B-A4B</p>
+                <p class="text-[9px] font-mono uppercase">MODALITY: MULTIMODAL_INPUT_SYNC</p>
+            </div>
+        </header>
+
+        <div class="flex gap-2 flex-wrap">
+            @for (mode of availableModes(); track mode.id) {
+            <button (click)="selectedMode.set(mode.id)"
+                [class.bg-blue-600]="selectedMode() === mode.id && mode.id === 'education'"
+                [class.bg-green-600]="selectedMode() === mode.id && mode.id === 'health'"
+                [class.bg-purple-600]="selectedMode() === mode.id && !['education','health'].includes(mode.id)"
+                class="flex-1 py-3 px-4 rounded-xl transition-all border border-white/10 hover:scale-[1.02] bg-zinc-900/50 min-w-[100px]">
+                <span class="text-2xl">{{ mode.icon }}</span>
+                <p class="font-black text-xs mt-1">{{ mode.label | uppercase }}</p>
+            </button>
+            }
+        </div>
+
+        <div (dragover)="onDragOver($event)" (dragleave)="onDragLeave()" (drop)="onDrop($event)"
+            [class.dragging-active]="isDragging()"
+            class="drop-zone border-2 border-dashed rounded-xl transition-all duration-300 relative bg-zinc-950/50 flex flex-col items-center justify-center overflow-hidden"
+            [class.border-blue-800]="selectedMode() === 'education'"
+            [class.border-green-800]="selectedMode() === 'health'" style="height: 380px;"
+            (click)="!isCameraActive() && !fileName() && fileInput.click()">
+
+            <input #fileInput type="file" class="hidden" (change)="onFileSelected($event)"
+                [attr.accept]="allowedFileTypes()">
+
+            @if (isCameraActive()) {
+            <video #cameraVideo autoplay playsinline muted
+                class="absolute inset-0 w-full h-full object-cover z-10"></video>
+            <div class="absolute inset-0 z-20 flex items-center justify-center bg-black/10">
+                <button (click)="capturePhoto(); $event.stopPropagation()"
+                    class="w-20 h-20 rounded-full border-4 border-green-500 flex items-center justify-center hover:scale-110 active:scale-95 transition-transform bg-black/40 backdrop-blur-md shadow-[0_0_25px_#22c55e]">
+                    <span class="text-3xl">📸</span>
+                </button>
+                <button (click)="switchCamera()"
+                    class="absolute bottom-4 right-4 z-30 px-3 py-2 bg-black/80 rounded-full border border-green-500 text-[10px] font-black">
+                    🔄 CAMBIAR CÁMARA
+                </button>
+            </div>
+
+            @if (canUseLiveVision()) {
+            <div class="absolute bottom-4 left-4 z-30 flex gap-2">
+                <button (click)="liveVisionActive() ? stopLiveVision() : startLiveVision()"
+                    class="px-4 py-2 rounded-full transition-all duration-300 flex items-center gap-2 font-black text-[10px]"
+                    [class.bg-purple-600]="liveVisionActive()" [class.animate-pulse]="liveVisionActive()"
+                    [class.bg-zinc-800]="!liveVisionActive()" [class.border]="!liveVisionActive()"
+                    [class.border-purple-500]="!liveVisionActive()">
+                    <span class="text-lg">{{ liveVisionActive() ? '👁️' : '👁️‍🗨️' }}</span>
+                    <span>{{ liveVisionActive() ? 'VISIÓN ACTIVA' : 'ACTIVAR VISIÓN' }}</span>
+                </button>
+            </div>
+            }
+
+            <button (click)="stopCamera(); $event.stopPropagation()"
+                class="absolute top-4 right-4 z-30 text-red-500 font-black text-[10px] bg-black/80 px-3 py-2 rounded border border-red-500/40 tracking-widest">
+                [ ABORT_SCAN ]
+            </button>
+            }
+
+            @else if (fileName()) {
+            <div
+                class="w-full h-full p-6 flex flex-col items-center justify-center animate-in fade-in zoom-in duration-500">
+                @if (selectedFile?.type?.startsWith('image/')) {
+                <img [src]="filePreview()"
+                    class="max-h-56 rounded border-2 border-green-500 shadow-[0_0_20px_rgba(34,197,94,0.3)] object-contain mb-4" />
+                } @else if (selectedFile?.type?.startsWith('video/')) {
+                <video [src]="filePreview()" class="max-h-56 rounded border-2 border-green-500 mb-4" muted autoplay
+                    loop></video>
+                } @else {
+                <div class="text-8xl mb-4 drop-shadow-[0_0_15px_rgba(34,197,94,0.4)]">{{ fileIcon() || '📦' }}</div>
+                }
+
+                <div
+                    class="bg-black/80 backdrop-blur-md p-3 rounded border border-green-900/50 text-center min-w-[240px]">
+                    <p class="text-sm font-black text-white truncate px-2">{{ fileName() }}</p>
+                    <p class="text-[9px] text-green-500 mt-1 font-mono uppercase tracking-widest">{{ fileSize() }}</p>
+                </div>
+
+                <div class="flex gap-4 mt-6">
+                    <button (click)="clearFile(); $event.stopPropagation()"
+                        class="px-6 py-1.5 text-[10px] bg-red-950/40 text-red-500 border border-red-500/50 rounded hover:bg-red-500 hover:text-white font-black transition-all">
+                        🗑️ REJECT
+                    </button>
+                    @if (canClearAll()) {
+                    <button (click)="clearAll(); $event.stopPropagation()"
+                        class="px-6 py-1.5 text-[10px] bg-zinc-900 text-zinc-500 border border-zinc-700 rounded hover:bg-white hover:text-black font-black transition-all">
+                        🔄 RESET
+                    </button>
+                    }
+                </div>
+            </div>
+            }
+
+            @else {
+            <div class="text-center group-hover:scale-110 transition-transform duration-500">
+                <div class="text-7xl mb-4 animate-pulse">{{ modeIcon() }}</div>
+                <p class="text-xl font-black uppercase tracking-[0.3em]">{{ modeTitle() }}</p>
+                <p class="text-[10px] opacity-40 mt-3 font-mono">READY_FOR_MULTIMODAL_DATA_STREAM</p>
+                <button (click)="toggleCamera(); $event.stopPropagation()"
+                    class="mt-6 p-3 bg-blue-900/20 border border-blue-500/50 rounded-full hover:bg-blue-600 transition-all shadow-[0_0_15px_rgba(59,130,246,0.2)]">
+                    <span class="text-xl">📷</span>
+                </button>
+            </div>
+            }
+        </div>
+
+        <div class="bg-zinc-950 border border-green-900/50 p-4 rounded-xl shadow-2xl relative">
+            <label class="text-[9px] uppercase mb-2 block opacity-50 flex justify-between font-black tracking-widest">
+                <span>> INPUT_QUERY_COMMAND</span>
+                <span class="text-green-500">{{ userPrompt().length }}/500</span>
+            </label>
+
+            <div class="relative w-full">
+                <textarea [ngModel]="userPrompt()" (ngModelChange)="userPrompt.set($event)" maxlength="500"
+                    class="w-full bg-black/40 border border-green-900/20 rounded p-4 text-green-400 placeholder-green-900/30 focus:outline-none focus:border-green-500/50 transition-all resize-none h-28 pr-16 custom-scrollbar text-sm"
+                    placeholder="WAITING FOR OPERATOR INSTRUCTIONS...">
+                </textarea>
+
+                <div class="absolute right-3 bottom-3 z-30">
+                    <button (click)="toggleRecording()"
+                        class="p-3 rounded-full transition-all duration-300 border backdrop-blur-md flex items-center justify-center shadow-lg"
+                        [class.bg-red-900]="isRecording()" [class.border-red-500]="isRecording()"
+                        [class.animate-pulse]="isRecording()" [class.bg-zinc-900]="!isRecording()"
+                        [class.border-green-900]="!isRecording()" [class.hover:bg-green-600]="!isRecording()">
+                        <span class="text-xl">{{ isRecording() ? '🛑' : '🎙️' }}</span>
+                    </button>
+                </div>
+            </div>
+
+            <app-analytics-panel></app-analytics-panel>
+
+            <div class="flex flex-col mt-4 pt-3 border-t border-green-900/20">
+                <!--
+                
+                 @if (canUseVideoUrl()) {
+                <div class="mb-3 flex gap-2">
+                    <input type="text" [(ngModel)]="videoUrl" placeholder="🔗 Pegar URL de video (YouTube, Vimeo...)"
+                        class="flex-1 bg-black/40 border border-green-900/20 rounded text-green-400 text-xs px-3">
+                    <button (click)="analyzeVideoUrl()" [disabled]="!videoUrl() || isLoading() || !isBackendOnline()"
+                        class="px-4 py-2 bg-purple-600 rounded text-xs font-black hover:bg-purple-700 transition-all disabled:opacity-30">
+                        🎬 ANALYZE VIDEO
+                    </button>
+                </div>
+                }
+                -->
+
+
+                <div class="flex justify-end">
+                    <button (click)="sendToVIC()"
+                        [disabled]="isLoading() || (!userPrompt().trim() && !selectedFile && !isCameraActive()) || !isBackendOnline()"
+                        class="px-6 py-6 rounded font-black shadow-xl uppercase tracking-widest transition-all disabled:opacity-20 text-xs"
+                        [class.bg-blue-600]="selectedMode() === 'education'"
+                        [class.bg-green-600]="selectedMode() === 'health'">
+                        <span class="flex items-center gap-4">
+                            @if (isLoading()) {
+                            <div class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin">
+                            </div>
+                            <span>PROCESSING_NEURAL_NETWORK...</span>
+                            } @else {
+                            <span>{{ modeIcon() }} EXECUTE ANALYSIS</span>
+                            }
+                        </span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <aside
+        class="col-span-12 lg:col-span-4 border border-green-900 bg-black/40 backdrop-blur-md rounded-xl p-5 flex flex-col overflow-hidden max-h-[92vh] relative z-20 shadow-2xl">
+
+        <div class="flex items-center gap-2 mb-4 border-b border-green-900/30 pb-3">
+            <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse shadow-[0_0_8px_#22c55e]"></div>
+            <h2 class="text-[10px] font-black tracking-[0.2em] uppercase text-green-500">NEURAL_REASONING_LOGS</h2>
+            <span class="text-[9px] ml-auto font-mono text-green-800">{{ reasoningLog().length }} ENTRIES</span>
+        </div>
+
+        <div class="flex-grow overflow-y-auto custom-scrollbar space-y-4 pr-2">
+            @for (log of reasoningLog(); track $index) {
+            <div class="text-[10px] leading-relaxed animate-in slide-in-from-left duration-300 font-mono opacity-70"
+                [class.text-red-400]="log.includes('ERROR') || log.includes('OFFLINE')"
+                [class.text-yellow-400]="log.includes('⚠️')">
+                <span class="text-green-900">[{{ $index }}]</span>
+                <span class="text-green-300 opacity-40 ml-2">>></span> {{ log }}
+            </div>
+            }
+
+
+
+            @if (aiResponse()) {
+            <div class="mt-6 p-5 border-2 rounded-xl animate-in zoom-in slide-in-from-bottom-6 duration-700 bg-zinc-950/90 shadow-[0_0_30px_rgba(0,0,0,0.6)] relative overflow-hidden"
+                [class.border-blue-500]="selectedMode() === 'education'"
+                [class.border-green-500]="selectedMode() === 'health'">
+
+                <div class="flex justify-between items-center mb-4 pb-2 border-b border-white/5">
+                    <p class="text-[10px] font-black uppercase flex items-center gap-2 tracking-[0.1em]"
+                        [class.text-blue-400]="selectedMode() === 'education'"
+                        [class.text-green-400]="selectedMode() === 'health'">
+                        <span>{{ modeIcon() }}</span> VERDICT_CORE:
+                    </p>
+
+                    <button (click)="isSpeaking() ? stopSpeaking() : speakResponse()"
+                        class="flex items-center gap-2 px-3 py-1 rounded-full border border-green-500/20 bg-green-950/30 hover:bg-green-500 hover:text-black transition-all">
+                        <span class="text-[9px] font-black">{{ isSpeaking() ? '🛑 STOP' : '🔊 ESCUCHAR' }}</span>
+                    </button>
+                </div>
+
+                <div class="prose prose-invert prose-green max-w-none min-h-[20px]">
+                    <div class="text-zinc-100 text-sm leading-relaxed font-sans whitespace-pre-wrap break-words">
+                        {{ aiResponse() }}
+                    </div>
+                </div>
+
+                <div class="mt-5 space-y-3">
+                    @if (hasAudioTranscription()) {
+                    <div class="pt-3 border-t border-green-900/20 bg-green-950/10 p-3 rounded italic">
+                        <p class="text-[8px] font-black text-green-500 uppercase tracking-widest mb-1">🎤
+                            AUDIO_TRANSCRIPTION:</p>
+                        <p class="text-xs text-green-400/60 font-serif">"{{ audioTranscription() }}"</p>
+                    </div>
+                    }
+
+                    @if (chartData()) {
+                    <div class="border border-green-500/20 rounded bg-black p-2 shadow-inner">
+                        <img [src]="'data:image/png;base64,' + chartData()"
+                            class="w-full h-auto rounded opacity-90 hover:opacity-100 transition-opacity cursor-zoom-in" />
+                    </div>
+                    }
+
+                    <div class="text-[8px] text-green-900 uppercase font-black text-right tracking-[0.2em] pt-2">
+                        ID: {{ processedFileType() || 'MULTIMODAL_STREAM' }} | ENGINE_OK
+                    </div>
+                </div>
+            </div>
+            }
+
+            @if (canUseLiveVision() && liveVisionActive() && liveVisionResponse()) {
+            <div class="mt-4 p-3 bg-purple-950/30 border border-purple-500/30 rounded-lg">
+                <p class="text-[8px] text-purple-400 uppercase tracking-wider flex items-center gap-2">
+                    <span>👁️</span> VISIÓN EN VIVO <span class="animate-pulse">●</span>
+                </p>
+                <p class="text-xs text-white/80 italic mt-1">{{ liveVisionResponse() }}</p>
+            </div>
+            }
+
+
+            @if (!isBackendOnline() && !isLoading()) {
+            <div class="mt-6 p-4 border-2 border-red-500/30 bg-red-950/20 rounded-xl animate-pulse text-center">
+                <p class="text-[10px] text-red-500 font-black tracking-widest uppercase">⚠️ VIC_CORE_DISCONNECTED</p>
+                <p class="text-[9px] text-red-300 opacity-60 mt-1 font-mono">RE-RUN: python main.py</p>
+            </div>
+            }
+        </div>
+    </aside>
+
+    
+</div>

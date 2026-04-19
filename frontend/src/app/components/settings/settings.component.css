@@ -1,0 +1,330 @@
+.settings-container {
+  padding: 24px;
+  max-width: 1100px;
+  margin: 0 auto;
+  color: #00ff88;
+  font-family: monospace;
+}
+
+.settings-header {
+  margin-bottom: 32px;
+  border-bottom: 1px solid #00ff8833;
+  padding-bottom: 16px;
+}
+
+.settings-header h1 {
+  font-size: 28px;
+  margin: 0;
+}
+
+.settings-header p {
+  color: #888;
+  margin: 8px 0 0;
+  font-size: 13px;
+}
+
+/* ── SECCIONES ─────────────────────────────────────────────────────────────── */
+.settings-section {
+  background: #0a0a0a;
+  border: 1px solid #00ff8833;
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 24px;
+}
+
+.settings-section h2 {
+  margin: 0 0 6px;
+  font-size: 18px;
+}
+
+.section-hint {
+  color: #666;
+  font-size: 12px;
+  margin: 0 0 16px;
+}
+
+.section-hint strong {
+  color: #00ff88;
+}
+
+/* ── API KEY ROW ────────────────────────────────────────────────────────────── */
+.apikey-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.flex-1 { flex: 1; }
+
+.btn-icon {
+  background: #111;
+  border: 1px solid #333;
+  color: #fff;
+  padding: 8px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background 0.2s;
+}
+
+.btn-icon:hover { background: #222; }
+
+/* ── ESTADO DE CONEXIÓN ─────────────────────────────────────────────────────── */
+.endpoint-status {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  background: #111;
+  border-radius: 8px;
+}
+
+.status-indicator {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+}
+
+.status-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  animation: pulse 1.5s infinite;
+  flex-shrink: 0;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+.latency {
+  color: #f59e0b;
+  font-size: 12px;
+  font-family: monospace;
+}
+
+/* ── MODELO ACTIVO ──────────────────────────────────────────────────────────── */
+.current-model-card {
+  background: #00ff8811;
+  border: 1px solid #00ff8833;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 24px;
+}
+
+.model-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.model-name {
+  font-size: 17px;
+  font-weight: bold;
+  margin-right: 8px;
+}
+
+.model-details {
+  display: flex;
+  gap: 16px;
+  font-size: 13px;
+  color: #aaa;
+  flex-wrap: wrap;
+}
+
+/* ── TAG BADGE ──────────────────────────────────────────────────────────────── */
+.tag-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 99px;
+  font-size: 11px;
+  font-weight: bold;
+  color: #000;
+  margin-left: 6px;
+  vertical-align: middle;
+}
+
+.tag-badge.sm {
+  font-size: 10px;
+  padding: 1px 6px;
+}
+
+/* ── MODEL ID CHIP ──────────────────────────────────────────────────────────── */
+.model-id-chip {
+  display: inline-block;
+  background: #1a1a1a;
+  border: 1px solid #333;
+  color: #00ff88;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-family: monospace;
+}
+
+.model-id-chip.sm { font-size: 10px; }
+
+.model-badge.recommended {
+  display: inline-block;
+  background: #22c55e;
+  color: #000;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: bold;
+  margin-left: 6px;
+  vertical-align: middle;
+}
+
+/* ── MODELS GRID ────────────────────────────────────────────────────────────── */
+.models-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+.model-card {
+  background: #111;
+  border: 1px solid #2a2a2a;
+  border-radius: 8px;
+  padding: 14px;
+  transition: all 0.2s;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.model-card:hover { border-color: #444; }
+
+.model-card.active {
+  border-color: #00ff88;
+  background: #00ff8810;
+}
+
+.model-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.model-specs {
+  display: flex;
+  gap: 10px;
+  font-size: 11px;
+  color: #666;
+}
+
+.model-desc {
+  font-size: 12px;
+  color: #666;
+  line-height: 1.5;
+  flex: 1;
+}
+
+.model-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 4px;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.active-label {
+  font-size: 12px;
+  color: #22c55e;
+  font-weight: bold;
+}
+
+/* ── INFO NOTE ──────────────────────────────────────────────────────────────── */
+.info-note {
+  display: flex;
+  gap: 10px;
+  background: #0f1a2e;
+  border: 1px solid #1e3a5f;
+  border-radius: 8px;
+  padding: 12px 16px;
+  font-size: 12px;
+  color: #7ba7d4;
+  line-height: 1.5;
+}
+
+.info-note strong { color: #93c5fd; }
+
+/* ── BOTONES ────────────────────────────────────────────────────────────────── */
+.btn-switch, .btn-test, .btn-save {
+  background: #1a1a1a;
+  border: 1px solid #333;
+  color: #00ff88;
+  padding: 6px 14px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: monospace;
+  font-size: 12px;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.btn-switch:hover:not(:disabled),
+.btn-test:hover,
+.btn-save:hover {
+  background: #00ff8822;
+  border-color: #00ff88;
+}
+
+.btn-switch:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.btn-save {
+  padding: 8px 16px;
+  font-size: 13px;
+}
+
+.config-input {
+  background: #000;
+  border: 1px solid #333;
+  color: #00ff88;
+  padding: 10px 12px;
+  border-radius: 4px;
+  font-family: monospace;
+  font-size: 13px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.config-input:focus {
+  outline: none;
+  border-color: #00ff88;
+}
+
+/* ── TOAST ──────────────────────────────────────────────────────────────────── */
+.toast {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-family: monospace;
+  animation: slideIn 0.3s ease;
+  z-index: 9999;
+  max-width: 320px;
+}
+
+.toast.success { background: #00ff88; color: #000; }
+.toast.error   { background: #ef4444; color: #fff; }
+
+@keyframes slideIn {
+  from { transform: translateX(110%); opacity: 0; }
+  to   { transform: translateX(0);   opacity: 1; }
+}

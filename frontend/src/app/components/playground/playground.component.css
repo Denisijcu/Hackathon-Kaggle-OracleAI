@@ -1,0 +1,284 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   ANIMACIONES
+═══════════════════════════════════════════════════════════════════════════ */
+
+@keyframes slideInFromRight {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes fadeInZoom {
+    from {
+        transform: scale(0.8);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+@keyframes scan {
+    from {
+        background-position: 0 0;
+    }
+    to {
+        background-position: 0 100%;
+    }
+}
+
+.animate-in {
+    animation-duration: 0.3s;
+    animation-fill-mode: both;
+}
+
+.slide-in-from-right {
+    animation-name: slideInFromRight;
+}
+
+.zoom-in {
+    animation-name: fadeInZoom;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   SCANLINE EFFECT
+═══════════════════════════════════════════════════════════════════════════ */
+
+.scanline-effect {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        to bottom,
+        transparent 50%,
+        rgba(0, 255, 0, 0.03) 50%
+    );
+    background-size: 100% 4px;
+    pointer-events: none;
+    z-index: 10;
+    animation: scan 8s linear infinite;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   DROP ZONE
+═══════════════════════════════════════════════════════════════════════════ */
+
+.drop-zone {
+    position: relative !important;
+}
+
+.drop-zone.dragging-active {
+    border-color: #22c55e;
+    background-color: rgba(34, 197, 94, 0.1);
+    transform: scale(1.02);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   CUSTOM SCROLLBAR
+═══════════════════════════════════════════════════════════════════════════ */
+
+.custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+    background: #1a1a1a;
+    border-radius: 3px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #22c55e;
+    border-radius: 3px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #16a34a;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   TABLAS
+═══════════════════════════════════════════════════════════════════════════ */
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem 0;
+    background: rgba(34, 197, 94, 0.05);
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid #22c55e;
+}
+
+th {
+    background: rgba(34, 197, 94, 0.2);
+    color: #22c55e;
+    padding: 12px;
+    text-align: left;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+}
+
+td {
+    padding: 12px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    color: #e5e5e5;
+}
+
+tr:hover {
+    background: rgba(34, 197, 94, 0.1);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   BOTONES
+═══════════════════════════════════════════════════════════════════════════ */
+
+button {
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+button:active {
+    transform: scale(0.98);
+}
+
+.mode-btn {
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.mode-btn.active {
+    box-shadow: 0 0 20px rgba(34, 197, 94, 0.3);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   VIDEO / CÁMARA
+═══════════════════════════════════════════════════════════════════════════ */
+
+.camera-feed {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover;
+    z-index: 10;
+}
+
+.camera-controls {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 20;
+    background: rgba(0, 0, 0, 0.2);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   MARKDOWN / CONTENIDO
+═══════════════════════════════════════════════════════════════════════════ */
+
+.verdict-text {
+    color: #f4f4f5;
+    text-shadow: 0 0 1px rgba(255, 255, 255, 0.1);
+    letter-spacing: 0.015em;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   BOOST PARA BOTONES DE MODO (Playground)
+═══════════════════════════════════════════════════════════════════════════ */
+
+.flex-1.py-3.px-4 {
+    padding-top: 1.5rem !important;
+    padding-bottom: 1.5rem !important;
+    min-height: 110px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.flex-1.py-3.px-4 p.font-black {
+    font-size: 1rem !important;
+    letter-spacing: 0.1em;
+    margin-top: 0.75rem !important;
+}
+
+.flex-1.py-3.px-4 p.text-\[9px\] {
+    font-size: 11px !important;
+    opacity: 0.8;
+    margin-top: 0.25rem;
+}
+
+.text-2xl {
+    font-size: 2.5rem !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   GLOBALES
+═══════════════════════════════════════════════════════════════════════════ */
+
+html {
+    scroll-behavior: smooth;
+}
+
+/* PARCHE PARA MOBILE WEBVIEW - VERTEX CENTINEL */
+@media (max-width: 768px) {
+    /* Evita que los contenedores colapsen el texto */
+    .verdict-text, p, span, td {
+        overflow-wrap: break-word !important;
+        word-wrap: break-word !important;
+        word-break: break-word !important;
+        white-space: normal !important;
+    }
+
+    /* Permite scroll horizontal en tablas en lugar de esconderlas */
+    table {
+        display: block !important;
+        overflow-x: auto !important;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    /* Fuerza a que el contenedor de la respuesta respire */
+    .animate-in {
+        height: auto !important;
+        min-height: fit-content !important;
+        opacity: 1 !important; /* Por si la animación se queda pegada en 0 */
+    }
+
+    /* El scanline a veces jode el refresco de pantalla en Android */
+    .scanline-effect {
+        display: none; /* Desactívalo en móvil para probar si es el culpable */
+    }
+}
+
+/* FIX WEBVIEW ANDROID — fuerza visibilidad del bloque de respuesta */
+@media (max-width: 768px) {
+    
+    /* Fuerza el aside a ser visible */
+    aside {
+        max-height: none !important;
+        overflow: visible !important;
+        min-height: 300px !important;
+    }
+    
+    /* Quita animaciones que bloquean opacity */
+    .animate-in, .zoom-in, .slide-in-from-bottom-6 {
+        animation: none !important;
+        opacity: 1 !important;
+        transform: none !important;
+    }
+
+    /* Fuerza el grid a columna única */
+    .grid-cols-12 {
+        display: flex !important;
+        flex-direction: column !important;
+    }
+}

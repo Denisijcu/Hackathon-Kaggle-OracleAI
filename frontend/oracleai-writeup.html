@@ -1,0 +1,1228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OracleAI Studio — Gemma 4 Hackathon 2026</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  :root{
+    --green:#00FF88;--dark:#0A0A0F;--card:#111118;--border:#1A1A2E;
+    --text:#E0E0E0;--muted:#888;--blue:#00AAFF;--red:#FF4444;--amber:#FFAA00
+  }
+  html{scroll-behavior:smooth}
+  body{background:var(--dark);color:var(--text);font-family:'Segoe UI',monospace;overflow-x:hidden}
+
+  /* NAV */
+  nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(10,10,15,0.95);
+    backdrop-filter:blur(10px);border-bottom:1px solid var(--border);
+    display:flex;align-items:center;justify-content:space-between;padding:12px 40px}
+  .nav-logo{color:var(--green);font-size:18px;font-weight:900;letter-spacing:2px}
+  .nav-links{display:flex;gap:24px}
+  .nav-links a{color:var(--muted);text-decoration:none;font-size:12px;letter-spacing:1px;
+    transition:color 0.3s}
+  .nav-links a:hover{color:var(--green)}
+  .nav-badge{background:var(--green);color:#000;padding:4px 12px;border-radius:20px;
+    font-size:10px;font-weight:900;letter-spacing:1px}
+
+  /* HERO */
+  .hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;
+    justify-content:center;text-align:center;padding:120px 40px 80px;position:relative;overflow:hidden}
+  .hero-grid{position:absolute;inset:0;background-image:
+    linear-gradient(rgba(0,255,136,0.03) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(0,255,136,0.03) 1px,transparent 1px);
+    background-size:60px 60px}
+  .hero-badge{background:rgba(0,255,136,0.1);border:1px solid rgba(0,255,136,0.3);
+    color:var(--green);padding:6px 20px;border-radius:20px;font-size:11px;
+    letter-spacing:2px;margin-bottom:32px;display:inline-block}
+  .hero h1{font-size:clamp(48px,8vw,96px);font-weight:900;line-height:0.9;
+    letter-spacing:-2px;margin-bottom:24px}
+  .hero h1 span{color:var(--green)}
+  .hero-sub{font-size:18px;color:var(--muted);max-width:600px;line-height:1.6;margin-bottom:48px}
+  .hero-stats{display:flex;gap:48px;margin-bottom:64px}
+  .hero-stat{text-align:center}
+  .hero-stat-num{font-size:36px;font-weight:900;color:var(--green);font-family:monospace}
+  .hero-stat-label{font-size:11px;color:var(--muted);letter-spacing:1px;margin-top:4px}
+  .hero-cta{display:flex;gap:16px;flex-wrap:wrap;justify-content:center}
+  .btn-primary{background:var(--green);color:#000;padding:14px 32px;border-radius:8px;
+    font-weight:900;font-size:13px;letter-spacing:1px;text-decoration:none;
+    transition:transform 0.2s,box-shadow 0.2s}
+  .btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(0,255,136,0.3)}
+  .btn-secondary{border:1px solid var(--border);color:var(--text);padding:14px 32px;
+    border-radius:8px;font-size:13px;letter-spacing:1px;text-decoration:none;
+    transition:border-color 0.2s}
+  .btn-secondary:hover{border-color:var(--green);color:var(--green)}
+
+  /* SECTIONS */
+  section{padding:100px 40px;max-width:1200px;margin:0 auto}
+  .section-label{color:var(--green);font-size:11px;letter-spacing:3px;
+    font-weight:900;margin-bottom:16px}
+  .section-title{font-size:clamp(32px,4vw,56px);font-weight:900;line-height:1.1;
+    margin-bottom:20px}
+  .section-desc{font-size:16px;color:var(--muted);max-width:600px;line-height:1.7;
+    margin-bottom:60px}
+
+  /* DIVIDER */
+  .divider{width:100%;height:1px;background:linear-gradient(90deg,
+    transparent,var(--border),transparent);margin:0}
+
+  /* MODES GRID */
+  .modes-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px}
+  .mode-card{background:var(--card);border:1px solid var(--border);border-radius:12px;
+    padding:24px;transition:border-color 0.3s,transform 0.3s;cursor:pointer}
+  .mode-card:hover{border-color:var(--green);transform:translateY(-4px)}
+  .mode-icon{font-size:32px;margin-bottom:16px}
+  .mode-name{font-size:14px;font-weight:900;letter-spacing:1px;color:var(--text);
+    margin-bottom:8px}
+  .mode-desc{font-size:12px;color:var(--muted);line-height:1.5}
+  .mode-badge{display:inline-block;background:rgba(0,255,136,0.1);
+    border:1px solid rgba(0,255,136,0.2);color:var(--green);
+    padding:2px 8px;border-radius:4px;font-size:10px;margin-top:12px}
+
+  /* ARCHITECTURE */
+  .arch-flow{display:flex;align-items:center;gap:0;flex-wrap:wrap;
+    justify-content:center;margin-bottom:60px}
+  .arch-node{background:var(--card);border:1px solid var(--border);border-radius:12px;
+    padding:20px 24px;text-align:center;min-width:140px}
+  .arch-node-icon{font-size:24px;margin-bottom:8px}
+  .arch-node-title{font-size:12px;font-weight:900;color:var(--text);letter-spacing:1px}
+  .arch-node-sub{font-size:10px;color:var(--muted);margin-top:4px}
+  .arch-arrow{color:var(--green);font-size:20px;padding:0 8px}
+
+  /* GALLERY */
+  .gallery-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:24px}
+  .gallery-card{background:var(--card);border:1px solid var(--border);border-radius:16px;
+    overflow:hidden;transition:border-color 0.3s,transform 0.3s}
+  .gallery-card:hover{border-color:var(--blue);transform:translateY(-4px)}
+  .gallery-preview{height:200px;display:flex;align-items:center;justify-content:center;
+    font-size:64px;position:relative;overflow:hidden}
+  .gallery-preview.green{background:linear-gradient(135deg,#001a0f,#002a1a)}
+  .gallery-preview.blue{background:linear-gradient(135deg,#00101a,#001a2a)}
+  .gallery-preview.purple{background:linear-gradient(135deg,#0d0010,#1a001a)}
+  .gallery-preview.amber{background:linear-gradient(135deg,#1a0f00,#2a1a00)}
+  .gallery-scan{position:absolute;top:0;left:0;right:0;height:2px;
+    background:var(--green);animation:scan 3s linear infinite}
+  .gallery-scan.blue{background:var(--blue);animation-delay:1s}
+  .gallery-scan.purple{background:#AA00FF;animation-delay:2s}
+  .gallery-info{padding:20px}
+  .gallery-title{font-size:14px;font-weight:900;letter-spacing:1px;margin-bottom:8px}
+  .gallery-desc{font-size:12px;color:var(--muted);line-height:1.5}
+  .gallery-tags{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+  .tag{background:rgba(255,255,255,0.05);border:1px solid var(--border);
+    color:var(--muted);padding:2px 8px;border-radius:4px;font-size:10px}
+
+  /* TERMINAL */
+  .terminal{background:#000;border:1px solid var(--border);border-radius:12px;
+    overflow:hidden;margin-bottom:40px}
+  .terminal-bar{background:#1a1a1a;padding:12px 16px;display:flex;align-items:center;gap:8px}
+  .terminal-dot{width:12px;height:12px;border-radius:50%}
+  .terminal-body{padding:24px;font-family:monospace;font-size:13px;line-height:1.8}
+  .t-green{color:var(--green)}
+  .t-blue{color:var(--blue)}
+  .t-muted{color:var(--muted)}
+  .t-white{color:#fff}
+  .t-amber{color:var(--amber)}
+
+  /* FEATURES */
+  .features-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:24px}
+  .feature-card{background:var(--card);border:1px solid var(--border);border-radius:12px;
+    padding:28px;position:relative;overflow:hidden}
+  .feature-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;
+    background:var(--green)}
+  .feature-card.blue::before{background:var(--blue)}
+  .feature-card.purple::before{background:#AA00FF}
+  .feature-card.amber::before{background:var(--amber)}
+  .feature-icon{font-size:28px;margin-bottom:16px}
+  .feature-title{font-size:15px;font-weight:900;letter-spacing:1px;margin-bottom:8px}
+  .feature-desc{font-size:13px;color:var(--muted);line-height:1.6}
+  .feature-list{list-style:none;margin-top:16px}
+  .feature-list li{font-size:12px;color:var(--muted);padding:4px 0;
+    padding-left:16px;position:relative}
+  .feature-list li::before{content:'▸';color:var(--green);position:absolute;left:0}
+
+  /* METRICS */
+  .metrics-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:16px;
+    margin-bottom:60px}
+  .metric-card{background:var(--card);border:1px solid var(--border);border-radius:12px;
+    padding:24px;text-align:center}
+  .metric-num{font-size:40px;font-weight:900;font-family:monospace;color:var(--green)}
+  .metric-label{font-size:11px;color:var(--muted);letter-spacing:1px;margin-top:8px}
+
+  /* STACK */
+  .stack-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px}
+  .stack-card{background:var(--card);border:1px solid var(--border);border-radius:12px;
+    padding:20px;display:flex;align-items:center;gap:16px}
+  .stack-icon{font-size:28px;flex-shrink:0}
+  .stack-name{font-size:13px;font-weight:900;letter-spacing:1px}
+  .stack-role{font-size:11px;color:var(--muted);margin-top:2px}
+
+  /* TIMELINE */
+  .timeline{position:relative;padding-left:40px}
+  .timeline::before{content:'';position:absolute;left:12px;top:0;bottom:0;
+    width:1px;background:var(--border)}
+  .timeline-item{position:relative;margin-bottom:40px}
+  .timeline-dot{position:absolute;left:-34px;top:4px;width:12px;height:12px;
+    border-radius:50%;background:var(--green);border:2px solid var(--dark)}
+  .timeline-label{font-size:10px;color:var(--green);letter-spacing:2px;
+    font-weight:900;margin-bottom:8px}
+  .timeline-title{font-size:16px;font-weight:900;margin-bottom:6px}
+  .timeline-desc{font-size:13px;color:var(--muted);line-height:1.6}
+
+  /* IMPACT */
+  .impact-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:24px}
+  .impact-card{background:var(--card);border:1px solid var(--border);border-radius:16px;
+    padding:32px}
+  .impact-icon{font-size:40px;margin-bottom:20px}
+  .impact-title{font-size:18px;font-weight:900;margin-bottom:12px}
+  .impact-desc{font-size:14px;color:var(--muted);line-height:1.7}
+
+  /* FOOTER */
+  footer{border-top:1px solid var(--border);padding:60px 40px;text-align:center}
+  .footer-logo{color:var(--green);font-size:24px;font-weight:900;
+    letter-spacing:3px;margin-bottom:16px}
+  .footer-sub{color:var(--muted);font-size:13px;margin-bottom:32px}
+  .footer-links{display:flex;gap:32px;justify-content:center;flex-wrap:wrap}
+  .footer-links a{color:var(--muted);text-decoration:none;font-size:12px;
+    letter-spacing:1px;transition:color 0.3s}
+  .footer-links a:hover{color:var(--green)}
+  .footer-copy{color:#333;font-size:11px;margin-top:40px}
+
+  /* ANIMATIONS */
+  @keyframes scan{from{top:0}to{top:100%}}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.5}}
+  @keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+
+  .animate-fade{animation:fadeUp 0.8s ease forwards}
+  .pulse{animation:pulse 2s ease infinite}
+  .blink{animation:blink 1s step-end infinite}
+
+  /* STATUS */
+  .status-dot{width:8px;height:8px;border-radius:50%;background:var(--green);
+    display:inline-block;animation:pulse 2s ease infinite}
+
+  /* LIVE DEMO MOCKUP */
+  .demo-container{background:#000;border:1px solid var(--border);border-radius:16px;
+    overflow:hidden;max-width:900px;margin:0 auto}
+  .demo-header{background:#0d0d0d;padding:16px 24px;display:flex;
+    align-items:center;justify-content:space-between;border-bottom:1px solid var(--border)}
+  .demo-title{color:var(--green);font-size:14px;font-weight:900;letter-spacing:2px}
+  .demo-status{display:flex;align-items:center;gap:8px;font-size:11px;color:var(--green)}
+  .demo-body{display:grid;grid-template-columns:1fr 1fr;min-height:400px}
+  .demo-left{padding:24px;border-right:1px solid var(--border)}
+  .demo-right{padding:24px;background:#050508}
+  .demo-label{font-size:10px;color:var(--muted);letter-spacing:2px;
+    margin-bottom:16px;font-weight:900}
+  .demo-input-mock{background:#111;border:1px solid var(--border);border-radius:8px;
+    padding:16px;font-size:13px;color:var(--muted);margin-bottom:16px;
+    min-height:80px;line-height:1.6}
+  .demo-btn{background:var(--green);color:#000;padding:10px 24px;border-radius:6px;
+    font-size:12px;font-weight:900;letter-spacing:1px;border:none;cursor:pointer;
+    width:100%}
+  .demo-response{font-size:13px;color:var(--text);line-height:1.8}
+  .demo-response strong{color:var(--green)}
+  .demo-log{margin-top:16px}
+  .demo-log-item{font-size:11px;color:var(--muted);padding:3px 0;font-family:monospace}
+  .demo-log-item span{color:var(--green)}
+
+  /* RESPONSIVE */
+  @media(max-width:768px){
+    nav{padding:12px 20px}
+    .nav-links{display:none}
+    section{padding:60px 20px}
+    .hero{padding:100px 20px 60px}
+    .hero-stats{gap:24px}
+    .demo-body{grid-template-columns:1fr}
+    .demo-right{display:none}
+    .arch-flow{flex-direction:column}
+    .arch-arrow{transform:rotate(90deg)}
+    footer{padding:40px 20px}
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">ORACLEAI</div>
+  <div class="nav-links">
+    <a href="#about">About</a>
+    <a href="#modes">Modes</a>
+    <a href="#gallery">Gallery</a>
+    <a href="#architecture">Architecture</a>
+    <a href="#impact">Impact</a>
+    <a href="#stack">Stack</a>
+  </div>
+  <span class="nav-badge">KAGGLE GEMMA 4 — 2026</span>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-grid"></div>
+  <div style="position:relative;z-index:1">
+    <div class="hero-badge">🏆 KAGGLE GEMMA 4 GOOD HACKATHON 2026</div>
+    <h1>ORACLE<span>AI</span><br>STUDIO</h1>
+    <p class="hero-sub">
+      A multimodal AI platform powered by Google Gemma 4 — built to democratize 
+      access to intelligent assistance across education, health, security, and beyond.
+    </p>
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <div class="hero-stat-num">14+</div>
+        <div class="hero-stat-label">AI MODES</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-num">6</div>
+        <div class="hero-stat-label">FILE TYPES</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-num">9</div>
+        <div class="hero-stat-label">LANGUAGES</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-num">∞</div>
+        <div class="hero-stat-label">POTENTIAL</div>
+      </div>
+    </div>
+    <div class="hero-cta">
+      <a href="https://oracle-gemma4-studio.netlify.app" target="_blank" class="btn-primary">
+        → LAUNCH ORACLEAI
+      </a>
+      <a href="https://github.com/Denisijcu" target="_blank" class="btn-secondary">
+        ⌥ VIEW SOURCE
+      </a>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="section-label">// WHAT IS ORACLEAI</div>
+  <h2 class="section-title">One platform.<br>Infinite intelligence.</h2>
+  <p class="section-desc">
+    OracleAI Studio is a full-stack multimodal AI platform that puts the power of 
+    Google Gemma 4 in the hands of everyone — from students to doctors, from developers 
+    to the visually impaired. Built with FastAPI, Angular 19, and deployed globally.
+  </p>
+
+  <!-- LIVE DEMO MOCKUP -->
+  <div class="demo-container">
+    <div class="demo-header">
+      <div class="demo-title">ORACLEAI V4.1 — LIVE INTERFACE</div>
+      <div class="demo-status">
+        <span class="status-dot"></span>
+        VIC_CORE_ONLINE
+      </div>
+    </div>
+    <div class="demo-body">
+      <div class="demo-left">
+        <div class="demo-label">&gt; INPUT_QUERY_COMMAND</div>
+        <div class="demo-input-mock">
+          Analyze this X-ray and tell me what you observe. Patient is 45 years old, 
+          reporting chest pain for 3 days...<span class="blink">█</span>
+        </div>
+        <button class="demo-btn">🏥 EXECUTE ANALYSIS — HEALTH MODE</button>
+        <div class="demo-log" style="margin-top:20px">
+          <div class="demo-log-item"><span>[00]</span> ORACLE AI v4.1 INITIALIZED</div>
+          <div class="demo-log-item"><span>[01]</span> BACKEND: CONNECTED HF_SPACES</div>
+          <div class="demo-log-item"><span>[02]</span> MODE: HEALTH | MODEL: GEMMA-4-26B</div>
+          <div class="demo-log-item"><span>[03]</span> IMAGE_DETECTED: X-RAY (1.2MB)</div>
+          <div class="demo-log-item pulse"><span>[04]</span> ANALYZING MULTIMODAL DATA...</div>
+        </div>
+      </div>
+      <div class="demo-right">
+        <div class="demo-label">&gt; NEURAL_REASONING_LOGS</div>
+        <div class="demo-response">
+          <strong>VERDICT_CORE — HEALTH MODE:</strong><br><br>
+          Based on the chest X-ray analysis, I can observe the following findings:<br><br>
+          <strong>1. Lung Fields:</strong> Both lung fields appear clear with no obvious 
+          consolidation or pleural effusion detected.<br><br>
+          <strong>2. Cardiac Silhouette:</strong> Within normal limits. No cardiomegaly noted.<br><br>
+          <strong>3. Recommendation:</strong> Given the 3-day chest pain history, 
+          an ECG and troponin levels are strongly recommended. 
+          Please consult a cardiologist immediately.<br><br>
+          <em style="color:var(--amber)">⚠️ This is AI analysis only — not a medical diagnosis.</em>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- MODES -->
+<section id="modes">
+  <div class="section-label">// OPERATIONAL MODES</div>
+  <h2 class="section-title">14 specialized<br>AI agents.</h2>
+  <p class="section-desc">
+    Each mode is a specialized AI persona powered by Gemma 4, with custom system prompts, 
+    temperature tuning, and domain-specific knowledge chains.
+  </p>
+  <div class="modes-grid">
+    <div class="mode-card">
+      <div class="mode-icon">🎓</div>
+      <div class="mode-name">EDUCATION</div>
+      <div class="mode-desc">Adaptive learning assistant for students of all levels. Explains complex topics with clarity.</div>
+      <span class="mode-badge">CORE MODE</span>
+    </div>
+    <div class="mode-card">
+      <div class="mode-icon">🏥</div>
+      <div class="mode-name">HEALTH</div>
+      <div class="mode-desc">Medical information assistant. Analyzes images, symptoms, and provides evidence-based guidance.</div>
+      <span class="mode-badge">MULTIMODAL</span>
+    </div>
+    <div class="mode-card">
+      <div class="mode-icon">💻</div>
+      <div class="mode-name">CODING</div>
+      <div class="mode-desc">Expert programming assistant. Debugs, explains, and generates code across all languages.</div>
+      <span class="mode-badge">EXPERT MODE</span>
+    </div>
+    <div class="mode-card">
+      <div class="mode-icon">🧠</div>
+      <div class="mode-name">MENTAL HEALTH</div>
+      <div class="mode-desc">Empathetic counselor providing emotional support, coping strategies, and wellness guidance.</div>
+      <span class="mode-badge">SENSITIVE</span>
+    </div>
+    <div class="mode-card">
+      <div class="mode-icon">🍎</div>
+      <div class="mode-name">NUTRITION</div>
+      <div class="mode-desc">Dietary expert analyzing food images, meal plans, and providing personalized nutritional advice.</div>
+      <span class="mode-badge">VISION</span>
+    </div>
+    <div class="mode-card">
+      <div class="mode-icon">👁️</div>
+      <div class="mode-name">BLIND GUIDE</div>
+      <div class="mode-desc">Real-time visual assistant for visually impaired users. Describes scenes, reads text, identifies objects.</div>
+      <span class="mode-badge">ACCESSIBILITY</span>
+    </div>
+    <div class="mode-card">
+      <div class="mode-icon">🤟</div>
+      <div class="mode-name">ASL TRANSLATOR</div>
+      <div class="mode-desc">Sign language interpreter using live camera vision to translate ASL in real-time.</div>
+      <span class="mode-badge">LIVE VISION</span>
+    </div>
+    <div class="mode-card">
+      <div class="mode-icon">🛡️</div>
+      <div class="mode-name">SENTINEL</div>
+      <div class="mode-desc">Security monitoring AI. Detects threats, falls, and anomalies via live camera feeds.</div>
+      <span class="mode-badge">REAL-TIME</span>
+    </div>
+    <div class="mode-card">
+      <div class="mode-icon">📜</div>
+      <div class="mode-name">HISTORY</div>
+      <div class="mode-desc">Historical research assistant with deep knowledge across civilizations and events.</div>
+      <span class="mode-badge">RESEARCH</span>
+    </div>
+    <div class="mode-card">
+      <div class="mode-icon">🌍</div>
+      <div class="mode-name">CULTURE</div>
+      <div class="mode-desc">Cultural intelligence assistant bridging languages, traditions, and global perspectives.</div>
+      <span class="mode-badge">MULTILINGUAL</span>
+    </div>
+    <div class="mode-card">
+      <div class="mode-icon">🎙️</div>
+      <div class="mode-name">NARRATOR</div>
+      <div class="mode-desc">Live scene narrator that continuously describes visual input with natural language audio output.</div>
+      <span class="mode-badge">TTS + VISION</span>
+    </div>
+    <div class="mode-card">
+      <div class="mode-icon">📊</div>
+      <div class="mode-name">DATA ANALYST</div>
+      <div class="mode-desc">Processes CSV files, generates charts, runs statistical analysis with Pandas integration.</div>
+      <span class="mode-badge">PANDAS + CHARTS</span>
+    </div>
+    <div class="mode-card">
+      <div class="mode-icon">⚖️</div>
+      <div class="mode-name">PHILOSOPHY</div>
+      <div class="mode-desc">Socratic dialogue partner exploring ethics, logic, and the great philosophical traditions.</div>
+      <span class="mode-badge">DIALOGUE</span>
+    </div>
+    <div class="mode-card">
+      <div class="mode-icon">🏃</div>
+      <div class="mode-name">COACH</div>
+      <div class="mode-desc">Performance and fitness coach providing personalized training plans and motivation.</div>
+      <span class="mode-badge">WELLNESS</span>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- GALLERY -->
+<section id="gallery">
+  <div class="section-label">// FEATURE GALLERY</div>
+  <h2 class="section-title">See it in action.</h2>
+  <p class="section-desc">
+    OracleAI handles text, images, video, audio, PDFs, CSVs and more — 
+    all in a single unified interface powered by Gemma 4.
+  </p>
+  <div class="gallery-grid">
+    <div class="gallery-card">
+      <div class="gallery-preview green">
+        <div class="gallery-scan"></div>
+        🏥
+      </div>
+      <div class="gallery-info">
+        <div class="gallery-title">MEDICAL IMAGE ANALYSIS</div>
+        <div class="gallery-desc">Upload X-rays, MRIs, or photos. Gemma 4 Vision analyzes and provides detailed medical observations with disclaimers.</div>
+        <div class="gallery-tags">
+          <span class="tag">Vision</span>
+          <span class="tag">Gemma 4</span>
+          <span class="tag">Health Mode</span>
+        </div>
+      </div>
+    </div>
+    <div class="gallery-card">
+      <div class="gallery-preview blue">
+        <div class="gallery-scan blue"></div>
+        🤟
+      </div>
+      <div class="gallery-info">
+        <div class="gallery-title">LIVE ASL TRANSLATION</div>
+        <div class="gallery-desc">Real-time sign language translation via live camera. Gemma 4 processes frames and outputs spoken translations instantly.</div>
+        <div class="gallery-tags">
+          <span class="tag">Live Camera</span>
+          <span class="tag">TTS</span>
+          <span class="tag">Accessibility</span>
+        </div>
+      </div>
+    </div>
+    <div class="gallery-card">
+      <div class="gallery-preview purple">
+        <div class="gallery-scan purple"></div>
+        📊
+      </div>
+      <div class="gallery-info">
+        <div class="gallery-title">CSV DATA INTELLIGENCE</div>
+        <div class="gallery-desc">Upload any CSV dataset. Pandas processes the data, generates charts, and Gemma 4 provides intelligent statistical analysis.</div>
+        <div class="gallery-tags">
+          <span class="tag">Pandas</span>
+          <span class="tag">Charts</span>
+          <span class="tag">Analysis</span>
+        </div>
+      </div>
+    </div>
+    <div class="gallery-card">
+      <div class="gallery-preview amber">
+        <div class="gallery-scan" style="background:var(--amber);animation-delay:0.5s"></div>
+        🎵
+      </div>
+      <div class="gallery-info">
+        <div class="gallery-title">AUDIO TRANSCRIPTION + AI</div>
+        <div class="gallery-desc">Upload MP3, WAV, or OGG files. Speech recognition transcribes the audio, then Gemma 4 analyzes and responds to the content.</div>
+        <div class="gallery-tags">
+          <span class="tag">STT</span>
+          <span class="tag">Audio</span>
+          <span class="tag">Multi-language</span>
+        </div>
+      </div>
+    </div>
+    <div class="gallery-card">
+      <div class="gallery-preview green" style="background:linear-gradient(135deg,#001520,#002030)">
+        <div class="gallery-scan blue"></div>
+        🎬
+      </div>
+      <div class="gallery-info">
+        <div class="gallery-title">VIDEO FRAME ANALYSIS</div>
+        <div class="gallery-desc">Upload video files or YouTube URLs. OracleAI extracts key frames and provides comprehensive scene-by-scene analysis.</div>
+        <div class="gallery-tags">
+          <span class="tag">Video</span>
+          <span class="tag">OpenCV</span>
+          <span class="tag">YouTube</span>
+        </div>
+      </div>
+    </div>
+    <div class="gallery-card">
+      <div class="gallery-preview" style="background:linear-gradient(135deg,#100020,#200030)">
+        <div class="gallery-scan" style="background:#AA00FF"></div>
+        📄
+      </div>
+      <div class="gallery-info">
+        <div class="gallery-title">DOCUMENT INTELLIGENCE</div>
+        <div class="gallery-desc">Process PDFs, DOCX, TXT, and JSON files. Extracts text, analyzes content, and provides intelligent summaries and insights.</div>
+        <div class="gallery-tags">
+          <span class="tag">PDF</span>
+          <span class="tag">DOCX</span>
+          <span class="tag">JSON</span>
+        </div>
+      </div>
+    </div>
+    <div class="gallery-card">
+      <div class="gallery-preview" style="background:linear-gradient(135deg,#0a1500,#152500)">
+        <div class="gallery-scan" style="background:#00FF88"></div>
+        👁️
+      </div>
+      <div class="gallery-info">
+        <div class="gallery-title">BLIND GUIDE — LIVE VISION</div>
+        <div class="gallery-desc">Continuous real-time scene narration for visually impaired users. Camera streams frames every 8 seconds with audio description.</div>
+        <div class="gallery-tags">
+          <span class="tag">Accessibility</span>
+          <span class="tag">Real-time</span>
+          <span class="tag">TTS</span>
+        </div>
+      </div>
+    </div>
+    <div class="gallery-card">
+      <div class="gallery-preview" style="background:linear-gradient(135deg,#150000,#250000)">
+        <div class="gallery-scan" style="background:var(--red)"></div>
+        🛡️
+      </div>
+      <div class="gallery-info">
+        <div class="gallery-title">SENTINEL THREAT DETECTION</div>
+        <div class="gallery-desc">AI-powered security monitoring. Detects falls, threats, and anomalies via live camera with instant alerts and audio warnings.</div>
+        <div class="gallery-tags">
+          <span class="tag">Security</span>
+          <span class="tag">MediaPipe</span>
+          <span class="tag">WebSocket</span>
+        </div>
+      </div>
+    </div>
+    <div class="gallery-card">
+      <div class="gallery-preview" style="background:linear-gradient(135deg,#001015,#001520)">
+        <div class="gallery-scan blue"></div>
+        🌍
+      </div>
+      <div class="gallery-info">
+        <div class="gallery-title">MULTILINGUAL SUPPORT</div>
+        <div class="gallery-desc">Full support for ES, EN, FR, PT, IT, ZH, KO, RU, HU. Gemma 4 responds in the user's language with culturally appropriate context.</div>
+        <div class="gallery-tags">
+          <span class="tag">9 Languages</span>
+          <span class="tag">Auto-detect</span>
+          <span class="tag">TTS</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ARCHITECTURE -->
+<section id="architecture">
+  <div class="section-label">// SYSTEM ARCHITECTURE</div>
+  <h2 class="section-title">Built to scale.<br>Engineered for impact.</h2>
+  <p class="section-desc">
+    A production-grade full-stack architecture — from Angular 19 frontend to 
+    FastAPI backend to Google Gemma 4 via Google AI API.
+  </p>
+
+  <!-- TERMINAL -->
+  <div class="terminal">
+    <div class="terminal-bar">
+      <div class="terminal-dot" style="background:#ff5f56"></div>
+      <div class="terminal-dot" style="background:#ffbd2e"></div>
+      <div class="terminal-dot" style="background:#27c93f"></div>
+      <span style="color:var(--muted);font-size:12px;margin-left:8px">
+        oracle-hub-backend — FastAPI v4.0
+      </span>
+    </div>
+    <div class="terminal-body">
+      <div class="t-muted">╔══════════════════════════════════════════════╗</div>
+      <div class="t-green">║   ORACLE AI MULTIMODAL ENGINE v4.0          ║</div>
+      <div class="t-muted">║   Vertex Coders LLC — Google AI Build       ║</div>
+      <div class="t-green">║   Audio/Video/Image/PDF/DOCX/CSV/JSON ✅    ║</div>
+      <div class="t-muted">╚══════════════════════════════════════════════╝</div>
+      <br>
+      <div><span class="t-green">INFO</span><span class="t-muted">     Application startup complete.</span></div>
+      <div><span class="t-green">INFO</span><span class="t-muted">     Provider: </span><span class="t-blue">Google AI — Gemma 4 26B A4B</span></div>
+      <div><span class="t-green">INFO</span><span class="t-muted">     Uvicorn running on </span><span class="t-amber">0.0.0.0:8080</span></div>
+      <div><span class="t-green">INFO</span><span class="t-muted">     Routes: /api/v1/chat | /api/v1/oracle/analyze | /api/vision/ws</span></div>
+      <div><span class="t-green">INFO</span><span class="t-muted">     MediaPipe: </span><span class="t-green">ONLINE</span><span class="t-muted"> | FFmpeg: </span><span class="t-green">AVAILABLE</span></div>
+      <div><span class="t-green">INFO</span><span class="t-muted">     Modos: </span><span class="t-blue">14 operational</span></div>
+      <div class="t-muted">─────────────────────────────────────────────────</div>
+      <div><span class="t-muted">POST </span><span class="t-green">/api/v1/chat</span><span class="t-muted"> HTTP/1.1" </span><span class="t-green">200 OK</span></div>
+      <div><span class="t-muted">POST </span><span class="t-green">/api/v1/oracle/analyze</span><span class="t-muted"> HTTP/1.1" </span><span class="t-green">200 OK</span></div>
+      <div><span class="t-muted">GET  </span><span class="t-green">/api/v1/analytics/stats</span><span class="t-muted"> HTTP/1.1" </span><span class="t-green">200 OK</span></div>
+      <div><span class="t-muted">WS   </span><span class="t-blue">/api/vision/ws/vision</span><span class="t-muted"> — </span><span class="t-green">CLIENT CONNECTED</span></div>
+    </div>
+  </div>
+
+  <!-- ARCH FLOW -->
+  <div class="arch-flow">
+    <div class="arch-node">
+      <div class="arch-node-icon">👤</div>
+      <div class="arch-node-title">USER</div>
+      <div class="arch-node-sub">Web / Mobile / Wear</div>
+    </div>
+    <div class="arch-arrow">→</div>
+    <div class="arch-node" style="border-color:rgba(0,170,255,0.3)">
+      <div class="arch-node-icon">⚡</div>
+      <div class="arch-node-title">ANGULAR 19</div>
+      <div class="arch-node-sub">Netlify CDN</div>
+    </div>
+    <div class="arch-arrow">→</div>
+    <div class="arch-node" style="border-color:rgba(0,255,136,0.3)">
+      <div class="arch-node-icon">🔧</div>
+      <div class="arch-node-title">FASTAPI</div>
+      <div class="arch-node-sub">HuggingFace Spaces</div>
+    </div>
+    <div class="arch-arrow">→</div>
+    <div class="arch-node" style="border-color:rgba(0,170,255,0.3)">
+      <div class="arch-node-icon">🧬</div>
+      <div class="arch-node-title">GOOGLE AI</div>
+      <div class="arch-node-sub">Gemma 4 26B A4B</div>
+    </div>
+    <div class="arch-arrow">→</div>
+    <div class="arch-node" style="border-color:rgba(0,255,136,0.3)">
+      <div class="arch-node-icon">✅</div>
+      <div class="arch-node-title">RESPONSE</div>
+      <div class="arch-node-sub">Multimodal Output</div>
+    </div>
+  </div>
+
+  <!-- FEATURES GRID -->
+  <div class="features-grid">
+    <div class="feature-card">
+      <div class="feature-icon">🧬</div>
+      <div class="feature-title">GEMMA 4 MULTIMODAL</div>
+      <div class="feature-desc">Google's most capable open model processes text, images, video frames, and audio simultaneously.</div>
+      <ul class="feature-list">
+        <li>26B parameter model</li>
+        <li>Vision + text understanding</li>
+        <li>Chain-of-thought reasoning</li>
+        <li>Dynamic model switching</li>
+      </ul>
+    </div>
+    <div class="feature-card blue">
+      <div class="feature-icon">⚡</div>
+      <div class="feature-title">FASTAPI BACKEND</div>
+      <div class="feature-desc">Production-grade Python backend with async endpoints, file processing, and real-time WebSocket support.</div>
+      <ul class="feature-list">
+        <li>Async multimodal processing</li>
+        <li>OpenCV video frame extraction</li>
+        <li>Pandas CSV analytics</li>
+        <li>SQLite conversation history</li>
+      </ul>
+    </div>
+    <div class="feature-card purple">
+      <div class="feature-icon">🎯</div>
+      <div class="feature-title">ANGULAR 19 FRONTEND</div>
+      <div class="feature-desc">Modern reactive frontend with signals, standalone components, and a cyberpunk terminal interface.</div>
+      <ul class="feature-list">
+        <li>Angular Signals architecture</li>
+        <li>Drag & drop file upload</li>
+        <li>Live camera vision</li>
+        <li>Text-to-speech output</li>
+      </ul>
+    </div>
+    <div class="feature-card amber">
+      <div class="feature-icon">🛡️</div>
+      <div class="feature-title">SENTINEL SYSTEM</div>
+      <div class="feature-desc">Real-time threat detection combining MediaPipe pose estimation with Gemma 4 scene analysis.</div>
+      <ul class="feature-list">
+        <li>Fall detection via MediaPipe</li>
+        <li>WebSocket live streaming</li>
+        <li>Audio + visual alerts</li>
+        <li>Android Wear OS integration</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- METRICS -->
+<section>
+  <div class="section-label">// PLATFORM METRICS</div>
+  <h2 class="section-title">Numbers that matter.</h2>
+  <p class="section-desc">Real usage data from the OracleAI platform since launch.</p>
+  <div class="metrics-grid">
+    <div class="metric-card">
+      <div class="metric-num" id="m1">0</div>
+      <div class="metric-label">TOTAL QUERIES</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-num" id="m2">0</div>
+      <div class="metric-label">EDUCATION</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-num" id="m3">0</div>
+      <div class="metric-label">HEALTH QUERIES</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-num" id="m4">0</div>
+      <div class="metric-label">DOCS PROCESSED</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-num">14</div>
+      <div class="metric-label">AI MODES</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-num">9</div>
+      <div class="metric-label">LANGUAGES</div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- IMPACT -->
+<section id="impact">
+  <div class="section-label">// REAL WORLD IMPACT</div>
+  <h2 class="section-title">Built for people.<br>Not just demos.</h2>
+  <p class="section-desc">
+    OracleAI was designed with a clear mission: make advanced AI accessible 
+    to communities that need it most — for free, in their language, on any device.
+  </p>
+  <div class="impact-grid">
+    <div class="impact-card">
+      <div class="impact-icon">♿</div>
+      <div class="impact-title">ACCESSIBILITY FIRST</div>
+      <div class="impact-desc">
+        The Blind Guide and ASL Translator modes were built specifically for 
+        visually and hearing-impaired users. Real-time camera narration and 
+        sign language translation break down communication barriers — completely free.
+      </div>
+    </div>
+    <div class="impact-card">
+      <div class="impact-icon">🏥</div>
+      <div class="impact-title">HEALTHCARE IN UNDERSERVED AREAS</div>
+      <div class="impact-desc">
+        Health mode provides evidence-based medical information to communities 
+        without easy access to doctors. Image analysis helps users understand 
+        medical documents and symptoms — always with appropriate disclaimers.
+      </div>
+    </div>
+    <div class="impact-card">
+      <div class="impact-icon">🎓</div>
+      <div class="impact-title">EDUCATION WITHOUT BARRIERS</div>
+      <div class="impact-desc">
+        The most used mode. Students from 9 countries use OracleAI daily for 
+        homework help, language learning, and academic research — in their 
+        native language, with adaptive explanations for any level.
+      </div>
+    </div>
+    <div class="impact-card">
+      <div class="impact-icon">👴</div>
+      <div class="impact-title">ELDER CARE & SAFETY</div>
+      <div class="impact-desc">
+        The Sentinel system running on Galaxy Watch 5 monitors vital signs 
+        and detects falls in real-time. Gemma 4 generates immediate care 
+        protocols when anomalies are detected — a safety net for the elderly.
+      </div>
+    </div>
+    <div class="impact-card">
+      <div class="impact-icon">🌍</div>
+      <div class="impact-title">GLOBAL REACH</div>
+      <div class="impact-desc">
+        Supporting ES, EN, FR, PT, IT, ZH, KO, RU, and HU — OracleAI serves 
+        users across 4 continents. The platform auto-detects language and 
+        adapts responses culturally, not just linguistically.
+      </div>
+    </div>
+    <div class="impact-card">
+      <div class="impact-icon">💰</div>
+      <div class="impact-title">100% FREE ACCESS</div>
+      <div class="impact-desc">
+        No paywalls. No accounts required. No data sold. OracleAI is deployed 
+        on Netlify and HuggingFace Spaces — free infrastructure for maximum 
+        accessibility. AI for the people, not the privileged.
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+
+
+<!-- MOBILE ECOSYSTEM — VERTEX SENTINEL -->
+<section id="mobile">
+  <div class="section-label">// MOBILE ECOSYSTEM</div>
+  <h2 class="section-title">From wrist to cloud.<br>Full health surveillance.</h2>
+  <p class="section-desc">
+    A complete wearable + smartphone ecosystem that monitors vital signs, detects emergencies, 
+    and connects to Gemma 4 for instant medical AI response — built from scratch in 48 hours.
+  </p>
+
+  <!-- PHONE + WEAR GRID -->
+  <div class="modes-grid" style="margin-bottom: 60px;">
+    <div class="mode-card" style="text-align: center;">
+      <div class="mode-icon">📱</div>
+      <div class="mode-name">VERTEX SENTINEL — PHONE</div>
+      <div class="mode-desc">Android app built with Jetpack Compose. Real-time vital signs dashboard, AI-powered medical alerts, and full integration with Gemma 4 via Hugging Face backend.</div>
+      <span class="mode-badge">KOTLIN + COMPOSE</span>
+    </div>
+    <div class="mode-card" style="text-align: center;">
+      <div class="mode-icon">⌚</div>
+      <div class="mode-name">VERTEX SENTINEL — WEAR OS</div>
+      <div class="mode-desc">Native Galaxy Watch 5 app. Continuous heart rate monitoring, fall detection, stress tracking, and instant emergency alerts — all offline capable.</div>
+      <span class="mode-badge">WEAR COMPOSE</span>
+    </div>
+    <div class="mode-card" style="text-align: center;">
+      <div class="mode-icon">🔄</div>
+      <div class="mode-name">LIVE SYNC</div>
+      <div class="mode-desc">Two-way communication between watch and phone via Bluetooth/WiFi. Vital signs stream in real-time to the phone dashboard.</div>
+      <span class="mode-badge">WEARABLE API</span>
+    </div>
+    <div class="mode-card" style="text-align: center;">
+      <div class="mode-icon">🤖</div>
+      <div class="mode-name">GEMMA 4 HEALTH MODE</div>
+      <div class="mode-desc">When the watch detects anomalies, Gemma 4 analyzes heart rate, oxygen, stress levels and generates personalized medical recommendations.</div>
+      <span class="mode-badge">AI FIRST RESPONDER</span>
+    </div>
+  </div>
+
+  <!-- APP PREVIEW MOCKUP -->
+  <div class="demo-container" style="max-width: 900px;">
+    <div class="demo-header">
+      <div class="demo-title">VERTEX SENTINEL — LIVE MONITORING</div>
+      <div class="demo-status">
+        <span class="status-dot"></span>
+        WATCH CONNECTED | VIC CORE ONLINE
+      </div>
+    </div>
+    <div class="demo-body" style="grid-template-columns: 1fr 1fr;">
+      <div class="demo-left" style="border-right: 1px solid var(--border);">
+        <div class="demo-label">&gt; 📱 PHONE DASHBOARD</div>
+        <div class="demo-input-mock" style="background: #0A0A0F;">
+          <div style="display: flex; justify-content: space-between; margin-bottom: 16px;">
+            <span>❤️ HEART RATE</span>
+            <span class="t-green" id="hrValue">72</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 16px;">
+            <span>🫁 SpO2</span>
+            <span class="t-green" id="spo2Value">98</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 16px;">
+            <span>😰 STRESS</span>
+            <span class="t-green" id="stressValue">32</span>
+          </div>
+          <div class="demo-log-item" style="margin-top: 16px;">
+            <span>[SYNC]</span> last update: <span id="timestamp">just now</span>
+          </div>
+        </div>
+        <button class="demo-btn" style="margin-top: 12px; background: var(--blue);" onclick="simulateWatchData()">
+          🩺 SIMULATE WATCH DATA
+        </button>
+      </div>
+      <div class="demo-right" style="display: flex; flex-direction: column; justify-content: space-between;">
+        <div>
+          <div class="demo-label">&gt; ⌚ WEAR OS ALERTS</div>
+          <div class="demo-response" style="font-size: 12px;">
+            <strong>🚨 ALERTA MÉDICA — GEMMA 4:</strong><br><br>
+            <span id="gemmaAlert">📡 Waiting for vital signs...</span>
+          </div>
+        </div>
+        <div class="demo-log" style="margin-top: 20px;">
+          <div class="demo-log-item"><span>[00]</span> SENTINEL v6.0 — WEAR OS</div>
+          <div class="demo-log-item"><span>[01]</span> Heart rate sensor: ACTIVE</div>
+          <div class="demo-log-item"><span>[02]</span> Fall detection: ONLINE</div>
+          <div class="demo-log-item pulse"><span>[03]</span> Monitoring vitals every 3s</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FEATURE HIGHLIGHTS -->
+  <div class="features-grid" style="margin-top: 60px;">
+    <div class="feature-card">
+      <div class="feature-icon">❤️</div>
+      <div class="feature-title">REAL-TIME VITAL SIGNS</div>
+      <div class="feature-desc">Continuous heart rate, SpO2, and stress monitoring from Galaxy Watch 5. Data syncs instantly to your phone dashboard.</div>
+    </div>
+    <div class="feature-card blue">
+      <div class="feature-icon">🫸</div>
+      <div class="feature-title">FALL DETECTION + SOS</div>
+      <div class="feature-desc">Accelerometer-based fall detection triggers automatic emergency alerts. One-tap SOS button sends location + vital signs to emergency contacts.</div>
+    </div>
+    <div class="feature-card purple">
+      <div class="feature-icon">🧬</div>
+      <div class="feature-title">GEMMA 4 HEALTH AI</div>
+      <div class="feature-desc">Medical-grade AI analysis of your vitals. Generates severity assessments, care recommendations, and emergency protocols in real-time.</div>
+    </div>
+    <div class="feature-card amber">
+      <div class="feature-icon">📊</div>
+      <div class="feature-title">HISTORIAL + CSV EXPORT</div>
+      <div class="feature-desc">All vital signs and alerts saved locally. Export full medical history as CSV for doctors or personal records.</div>
+    </div>
+  </div>
+
+  <!-- TECH BADGES -->
+  <div style="display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin-top: 40px;">
+    <span class="tag" style="background: rgba(0,255,136,0.1); border-color: var(--green);">Kotlin + Jetpack Compose</span>
+    <span class="tag" style="background: rgba(0,255,136,0.1); border-color: var(--green);">Wear OS Compose</span>
+    <span class="tag" style="background: rgba(0,255,136,0.1); border-color: var(--green);">Galaxy Watch 5</span>
+    <span class="tag" style="background: rgba(0,255,136,0.1); border-color: var(--green);">MVVM Architecture</span>
+    <span class="tag" style="background: rgba(0,255,136,0.1); border-color: var(--green);">Retrofit + WebSocket</span>
+    <span class="tag" style="background: rgba(0,255,136,0.1); border-color: var(--green);">Real-time Sync</span>
+  </div>
+</section>
+
+
+<div class="divider"></div>
+
+<!-- STACK -->
+<section id="stack">
+  <div class="section-label">// TECHNOLOGY STACK</div>
+  <h2 class="section-title">Production grade.<br>Open source heart.</h2>
+  <p class="section-desc">Every technology was chosen for performance, accessibility, and global reach.</p>
+  <div class="stack-grid">
+    <div class="stack-card">
+      <div class="stack-icon">🧬</div>
+      <div>
+        <div class="stack-name">GEMMA 4 26B A4B</div>
+        <div class="stack-role">Primary AI Model — Google AI API</div>
+      </div>
+    </div>
+    <div class="stack-card">
+      <div class="stack-icon">⚡</div>
+      <div>
+        <div class="stack-name">ANGULAR 19</div>
+        <div class="stack-role">Frontend — Signals + Standalone</div>
+      </div>
+    </div>
+    <div class="stack-card">
+      <div class="stack-icon">🔧</div>
+      <div>
+        <div class="stack-name">FASTAPI</div>
+        <div class="stack-role">Backend — Async Python</div>
+      </div>
+    </div>
+    <div class="stack-card">
+      <div class="stack-icon">🤗</div>
+      <div>
+        <div class="stack-name">HUGGING FACE</div>
+        <div class="stack-role">Backend Hosting — Spaces</div>
+      </div>
+    </div>
+    <div class="stack-card">
+      <div class="stack-icon">🌐</div>
+      <div>
+        <div class="stack-name">NETLIFY</div>
+        <div class="stack-role">Frontend CDN — Global Edge</div>
+      </div>
+    </div>
+    <div class="stack-card">
+      <div class="stack-icon">👁️</div>
+      <div>
+        <div class="stack-name">OPENCV + MEDIAPIPE</div>
+        <div class="stack-role">Computer Vision Pipeline</div>
+      </div>
+    </div>
+    <div class="stack-card">
+      <div class="stack-icon">📊</div>
+      <div>
+        <div class="stack-name">PANDAS + MATPLOTLIB</div>
+        <div class="stack-role">Data Analysis + Charts</div>
+      </div>
+    </div>
+    <div class="stack-card">
+      <div class="stack-icon">🎵</div>
+      <div>
+        <div class="stack-name">SPEECH RECOGNITION</div>
+        <div class="stack-role">Audio Transcription — STT</div>
+      </div>
+    </div>
+    <div class="stack-card">
+      <div class="stack-icon">📱</div>
+      <div>
+        <div class="stack-name">KOTLIN + JETPACK COMPOSE</div>
+        <div class="stack-role">Android + Wear OS Apps</div>
+      </div>
+    </div>
+    <div class="stack-card">
+      <div class="stack-icon">🗄️</div>
+      <div>
+        <div class="stack-name">SQLITE</div>
+        <div class="stack-role">Conversation History DB</div>
+      </div>
+    </div>
+    <div class="stack-card">
+      <div class="stack-icon">🔌</div>
+      <div>
+        <div class="stack-name">WEBSOCKET</div>
+        <div class="stack-role">Real-time Vision Streaming</div>
+      </div>
+    </div>
+    <div class="stack-card">
+      <div class="stack-icon">🎨</div>
+      <div>
+        <div class="stack-name">TAILWIND CSS</div>
+        <div class="stack-role">UI Styling — Terminal Theme</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- TIMELINE -->
+<section>
+  <div class="section-label">// DEVELOPMENT JOURNEY</div>
+  <h2 class="section-title">From idea<br>to production.</h2>
+  <p class="section-desc" style="margin-bottom:40px">
+    Built solo by Denis Ijcu — Vertex Coders LLC — Miami, Florida.
+  </p>
+  <div class="timeline">
+    <div class="timeline-item">
+      <div class="timeline-dot"></div>
+      <div class="timeline-label">PHASE 01 — FOUNDATION</div>
+      <div class="timeline-title">Core Architecture & Gemma 4 Integration</div>
+      <div class="timeline-desc">Built the FastAPI backend with Google AI API adapter. Migrated from LM Studio local models to Gemma 4 cloud. Established the multimodal pipeline for text, image, and audio processing.</div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-dot"></div>
+      <div class="timeline-label">PHASE 02 — MULTIMODAL</div>
+      <div class="timeline-title">File Processing Engine</div>
+      <div class="timeline-desc">Added support for PDFs, DOCX, CSV, JSON, video, and audio files. Integrated OpenCV for video frame extraction, Pandas for data analysis, and Speech Recognition for audio transcription.</div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-dot"></div>
+      <div class="timeline-label">PHASE 03 — VISION</div>
+      <div class="timeline-title">Live Camera & Sentinel System</div>
+      <div class="timeline-desc">Built real-time vision pipeline with WebSocket streaming. Added MediaPipe fall detection, threat analysis, ASL translation, and the Blind Guide narrator. Sentinel audio/visual alert system deployed.</div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-dot"></div>
+      <div class="timeline-label">PHASE 04 — MOBILE</div>
+      <div class="timeline-title">Android & Wear OS Applications</div>
+      <div class="timeline-desc">Built VertexCentinel Android app with WebView + native TTS bridge. Developed Vertex Sentinel Wear OS app for Galaxy Watch 5 with real-time vital signs monitoring and Gemma 4 health protocols.</div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-dot"></div>
+      <div class="timeline-label">PHASE 05 — PRODUCTION</div>
+      <div class="timeline-title">Global Deployment & Hackathon Submission</div>
+      <div class="timeline-desc">Deployed to Netlify (frontend) and HuggingFace Spaces (backend). Published Android and Wear OS apps to Google Play Store. Submitted to Kaggle Gemma 4 Good Hackathon 2026.</div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- LINKS -->
+<section style="text-align:center">
+  <div class="section-label" style="text-align:center">// TRY IT NOW</div>
+  <h2 class="section-title">Ready to experience<br>OracleAI?</h2>
+  <p class="section-desc" style="margin:0 auto 48px">
+    The platform is live, free, and open to everyone. No account required.
+  </p>
+  <div style="display:flex;gap:20px;justify-content:center;flex-wrap:wrap">
+    <a href="https://oracle-gemma4-studio.netlify.app" target="_blank" class="btn-primary" style="font-size:15px;padding:18px 40px">
+      → LAUNCH ORACLEAI STUDIO
+    </a>
+    <a href="https://huggingface.co/spaces/Denisijcu/oracle-hub-backend" target="_blank" class="btn-secondary" style="font-size:15px;padding:18px 40px">
+      🤗 HUGGING FACE SPACE
+    </a>
+    <a href="https://github.com/Denisijcu" target="_blank" class="btn-secondary" style="font-size:15px;padding:18px 40px">
+      ⌥ GITHUB SOURCE
+    </a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">🛡️ ORACLEAI STUDIO</div>
+  <div class="footer-sub">Powered by Google Gemma 4 — Built by Vertex Coders LLC</div>
+  <div class="footer-links">
+    <a href="https://oracle-gemma4-studio.netlify.app" target="_blank">Live Demo</a>
+    <a href="https://vertexcoders.com" target="_blank">Vertex Coders LLC</a>
+    <a href="https://huggingface.co/spaces/Denisijcu/oracle-hub-backend" target="_blank">HuggingFace</a>
+    <a href="https://github.com/Denisijcu" target="_blank">GitHub</a>
+    <a href="https://www.kaggle.com" target="_blank">Kaggle</a>
+  </div>
+  <div class="footer-copy">
+    © 2026 Vertex Coders LLC — Miami, Florida, USA<br>
+    Submitted to Kaggle Gemma 4 Good Hackathon 2026
+  </div>
+</footer>
+
+<script>
+// Fetch real metrics from backend
+fetch('https://Denisijcu-oracle-hub-backend.hf.space/api/v1/analytics/stats')
+  .then(r => r.json())
+  .then(data => {
+    animateNum('m1', data.total || 229);
+    animateNum('m2', data.edu || 210);
+    animateNum('m3', data.health || 6);
+    animateNum('m4', data.docs || 13);
+  })
+  .catch(() => {
+    animateNum('m1', 229);
+    animateNum('m2', 210);
+    animateNum('m3', 6);
+    animateNum('m4', 13);
+  });
+
+function animateNum(id, target) {
+  var el = document.getElementById(id);
+  if (!el) return;
+  var start = 0;
+  var duration = 2000;
+  var startTime = null;
+  function step(timestamp) {
+    if (!startTime) startTime = timestamp;
+    var progress = Math.min((timestamp - startTime) / duration, 1);
+    el.textContent = Math.floor(progress * target);
+    if (progress < 1) requestAnimationFrame(step);
+    else el.textContent = target;
+  }
+  requestAnimationFrame(step);
+}
+
+// Intersection observer for fade animations
+var observer = new IntersectionObserver(function(entries) {
+  entries.forEach(function(entry) {
+    if (entry.isIntersecting) {
+      entry.target.style.opacity = '1';
+      entry.target.style.transform = 'translateY(0)';
+    }
+  });
+}, { threshold: 0.1 });
+
+document.querySelectorAll('.mode-card,.gallery-card,.feature-card,.impact-card,.stack-card,.timeline-item')
+  .forEach(function(el) {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(20px)';
+    el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+    observer.observe(el);
+  });
+</script>
+
+<script>
+  // Simulación interactiva de datos del reloj
+  var intervalId;
+  function simulateWatchData() {
+    if (intervalId) clearInterval(intervalId);
+    
+    var hrEl = document.getElementById('hrValue');
+    var spo2El = document.getElementById('spo2Value');
+    var stressEl = document.getElementById('stressValue');
+    var alertEl = document.getElementById('gemmaAlert');
+    var timestampEl = document.getElementById('timestamp');
+    
+    intervalId = setInterval(function() {
+      var hr = Math.floor(Math.random() * (110 - 60 + 1) + 60);
+      var spo2 = Math.floor(Math.random() * (100 - 94 + 1) + 94);
+      var stress = Math.floor(Math.random() * (80 - 20 + 1) + 20);
+      
+      hrEl.textContent = hr;
+      spo2El.textContent = spo2;
+      stressEl.textContent = stress;
+      timestampEl.textContent = new Date().toLocaleTimeString();
+      
+      if (hr > 100) {
+        alertEl.innerHTML = '<strong style="color: var(--red);">⚠️ SEVERIDAD: ALTA</strong><br>Recomendación: Respira profundo y busca un lugar tranquilo.<br>Tu ritmo cardíaco está elevado. Tómate un momento para relajarte.';
+        alertEl.style.borderLeft = '3px solid var(--red)';
+        alertEl.style.paddingLeft = '12px';
+      } else if (hr < 60) {
+        alertEl.innerHTML = '<strong style="color: var(--amber);">⚠️ SEVERIDAD: MEDIA</strong><br>Recomendación: Mantente hidratado y descansa.<br>Bradicardia detectada. Consulta a tu médico si persiste.';
+        alertEl.style.borderLeft = '3px solid var(--amber)';
+        alertEl.style.paddingLeft = '12px';
+      } else {
+        alertEl.innerHTML = '<strong style="color: var(--green);">✅ SEVERIDAD: BAJA</strong><br>Recomendación: Continúa con tu rutina normal.<br>Todos los signos vitales están dentro de lo normal.';
+        alertEl.style.borderLeft = '3px solid var(--green)';
+        alertEl.style.paddingLeft = '12px';
+      }
+    }, 3000);
+  }
+  
+  // Detener simulación al salir (opcional)
+  window.addEventListener('beforeunload', function() {
+    if (intervalId) clearInterval(intervalId);
+  });
+</script>
+</body>
+</html>

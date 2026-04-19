@@ -1,0 +1,44 @@
+<!-- Panel de Alerta -->
+@if (alertActive()) {
+  <div class="alert-panel danger">
+    <div class="alert-content">
+      <span class="alert-icon">🚨</span>
+      <span class="alert-message">{{ alertMessage() }}</span>
+      <button (click)="clearAlert()" class="btn-close-alert">✕</button>
+    </div>
+  </div>
+}
+
+<!-- Configuración de Alertas en el panel de configuración -->
+<div class="vision-config">
+  <h3>⚙️ CONFIGURACIÓN</h3>
+  
+  <div class="config-section">
+    <h4>🚨 ALERTAS</h4>
+    
+    <div class="config-row">
+      <label>🔊 Alertas por voz</label>
+      <input type="checkbox" [(ngModel)]="enableSoundAlerts">
+    </div>
+    
+    <div class="config-row">
+      <label>📱 Alertas por WhatsApp</label>
+      <input type="checkbox" [(ngModel)]="enableWhatsApp">
+    </div>
+    
+    @if (enableWhatsApp()) {
+      <div class="config-row">
+        <label>📞 Número WhatsApp (código país):</label>
+        <input type="tel" [(ngModel)]="whatsappNumber" placeholder="+521234567890">
+      </div>
+    }
+    
+    <div class="config-row">
+      <label>⏰ Alerta sin movimiento (minutos):</label>
+      <input type="range" min="1" max="30" step="1" [(ngModel)]="absenceMinutes">
+      <span>{{ absenceMinutes() }} min</span>
+    </div>
+  </div>
+  
+  <button (click)="saveConfig()" class="btn-save-config">💾 GUARDAR CONFIGURACIÓN</button>
+</div>
