@@ -10,7 +10,7 @@
 
 **Un asistente multimodal para comunidades globales. Educación + Salud. Offline. Privado.**
 
-[🎥 Ver Demo](https://youtu.be/QhuEDGV3O8o) • [📚 Documentación](#) • [🐛 Reportar Bug](https://github.com/vertexcoders/oracleai/issues)
+[🎥 Ver Demo](https://youtu.be/6iSAZ9ZImKo) • [📚 Documentación](#) • [🐛 Reportar Bug](https://github.com/vertexcoders/oracleai/issues)
 
 </div>
 
